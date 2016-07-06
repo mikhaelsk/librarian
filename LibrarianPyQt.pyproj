@@ -3,11 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{85c7c55b-3348-48ee-ba7a-9e158e035548}</ProjectGuid>
+    <ProjectGuid>{3485bf53-ee52-4af3-adcc-69a761b8e952}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>Controller.py</StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <StartupFile>main.py</StartupFile>
+    <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
@@ -22,25 +21,22 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Controller.py" />
-    <Compile Include="models\Library.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="models\MainModel.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="models\__init__.py" />
-    <Compile Include="utils\Logger.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="utils\__init__.py" />
-    <Compile Include="views\uimain.py" />
-    <Compile Include="views\__init__.py" />
+    <Compile Include="bin\Controller.py" />
+    <Compile Include="bin\models\Library.py" />
+    <Compile Include="bin\models\MainModel.py" />
+    <Compile Include="bin\models\__init__.py" />
+    <Compile Include="bin\utils\Logger.py" />
+    <Compile Include="bin\utils\__init__.py" />
+    <Compile Include="bin\views\uimain.py" />
+    <Compile Include="bin\views\__init__.py" />
+    <Compile Include="bin\__init__.py" />
+    <Compile Include="main.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="models" />
-    <Folder Include="utils\" />
-    <Folder Include="views" />
+    <Folder Include="bin" />
+    <Folder Include="bin\models" />
+    <Folder Include="bin\utils" />
+    <Folder Include="bin\views" />
   </ItemGroup>
   <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />

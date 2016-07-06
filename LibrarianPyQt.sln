@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PyQt0", "PyQt0.pyproj", "{85C7C55B-3348-48EE-BA7A-9E158E035548}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LibrarianPyQt", "LibrarianPyQt.pyproj", "{3485BF53-EE52-4AF3-ADCC-69A761B8E952}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,8 +11,8 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{85C7C55B-3348-48EE-BA7A-9E158E035548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{85C7C55B-3348-48EE-BA7A-9E158E035548}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3485BF53-EE52-4AF3-ADCC-69A761B8E952}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3485BF53-EE52-4AF3-ADCC-69A761B8E952}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,6 @@
-from views import *
-from models import *
-from utils import *
+from .views import *
+from .models import *
+from .utils import *
 import sys
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
@@ -29,30 +29,20 @@ class LibrarianMainWindow(Ui_MainWindow):
     AddFolder slot for signals
     '''
     def AddFolder( self ):
-        self.controller.logger.WriteToLog('Added new path: ' + self.inputPathLine.text())
+        self.controller.logger.WriteToLog( 'Added new path: ' + self.inputPathLine.text() )
         self.controller.model.AddFolder( self.inputPathLine.text() )
 
 class Controller():
     def __init__( self ):
-        self.model = MainModel()
-        self.logger = Logger()
+        self.logger = Logger()        
+        self.model = MainModel( self )
         self.logger.WriteToLog( "Init Done\n" )
 
     def PrintToLog( txt ):
         self.logger.WriteToLog( txt )
 
        
-'''
-MAIN function of this application
-'''
-if __name__ == "__main__":
-    app = QApplication( sys.argv )
-    mygui = QtWidgets.QMainWindow()
-    controller = Controller()
-    librarian = LibrarianMainWindow( mygui, controller )
-    mygui.show()
-    
-    sys.exit( app.exec_() )
+
     
     
 #http://projects.skylogic.ca/blog/how-to-install-pyqt5-and-build-your-first-gui-in-python-3-4/
