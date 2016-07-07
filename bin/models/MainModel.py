@@ -5,18 +5,18 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
 class MainModel():
     """files and folders model"""
-    nodeId = 0
+    numberOfDocs = 0
     def __init__( self, myController ):
         #super().__init__(0,1,self)
         self.nodeId = 0
         self.controller = myController
         libName = "MyLibrary"
-        self.library = QStandardItemModel(0,1)
-        self.library.setHeaderData(0, QtCore.Qt.Horizontal, QtCore.QVariant("TreeView of Library"))
+        self.library = QStandardItemModel( 0,1 )
+        self.library.setHeaderData( 0, QtCore.Qt.Horizontal, QtCore.QVariant( "TreeView of Library" ) )
         self.root = QStandardItem( libName )
         self.controller.PrintToLog( "Library initialized: " + libName )
-        self.nodeId+=1
-        self.library.appendRow(self.root)
+        #self.nodeId+=1
+        self.library.appendRow( self.root )
         
     def AddFolder( self, folderPath ):
         #self.controller.logger.WriteToLog( "New Folder added: " + path )
@@ -39,9 +39,26 @@ class MainModel():
             
     def _AddFileIntro( self, path, name ):
         #self.root.AddChild( Node( path + '\\' + name ) )
-        self.root.appendRow( QStandardItem(path + '\\' + name )) 
-        self.nodeId+=1
+        self.root.appendRow( QStandardItem( path + '\\' + name ) ) 
+        self.numberOfDocs += 1
         
+'''
+folders = []
+os.path.realpath(path)
+while 1:
+    path, folder = os.path.split(path)
+
+    if folder != "":
+        folders.append(folder)
+    else:
+        if path != "":
+            folders.append(path)
+
+        break
+
+folders.reverse()
+'''
+
 '''
 class Node(QStandardItem):
     def __init__( self, nameTxt ):      

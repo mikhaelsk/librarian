@@ -39,6 +39,9 @@ class LibrarianMainWindow( Ui_MainWindow ):
         super().setupUi( MainWindow )
         self.addFolderButton.clicked.connect( self.AddFolder )
         self.addFileButton.clicked.connect( self.AddFile )
+        self.exitButton.triggered.connect( self.HandleClose )
+        
+        #self.close.connect(self.HandleClose)
     '''
     AddFolder slot for signals
     '''
@@ -48,6 +51,13 @@ class LibrarianMainWindow( Ui_MainWindow ):
     def AddFile( self ):
         self.controller.AddFile( self.inputPathLine.text() )    
         
+    def closeEvent( self, event ):
+        self.controller.PrintToLog( "User has clicked the red x on the main window" )
+        event.accept()
+
+    def HandleClose( self ):
+        #self.closeEvent()
+        self.controller.SaveModel()
     '''
     def handleCloseEvent(self, event):
         event.accept()
@@ -59,15 +69,8 @@ class Controller():
         self.model = MainModel( self )
         self.logger.WriteToLog( "Init Done\n" )
 
-    '''    
-    def InitModel( self ):
-        model = QFileSystemModel()
-        model.setRootPath( QtCore.QDir.currentPath() )
-        #model.setRootPath("E:\Projects" )
-        self.mainwindow.treeView.setModel( model )
-    '''
-    def FinalizeInit(self):
-        self.mainwindow.treeView.setModel(self.model.library)
+    def FinalizeInit( self ):
+        self.mainwindow.treeView.setModel( self.model.library )
 
     def PrintToLog( self, txt ):
         self.logger.WriteToLog( txt )
@@ -83,10 +86,15 @@ class Controller():
         if os.path.isdir( txt ):
             self.logger.WriteToLog( 'Added new path: ' + txt )
             self.model.AddFolder( txt )  
+        self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
     
     def AddFile( self, txt ):
         if os.path.isfile( txt ):
             self.logger.WriteToLog( 'Added new path: ' + txt )
             self.model.AddFile( txt )  
+        self.mainwindow.numOfDocsLabel.text = self.model.numberOfDocs
     
-#http://projects.skylogic.ca/blog/how-to-install-pyqt5-and-build-your-first-gui-in-python-3-4/
+    def SaveModel(self):
+        pass
+
+

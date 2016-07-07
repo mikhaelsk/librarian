@@ -103,7 +103,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="numOfDocsLabel">
           <property name="minimumSize">
            <size>
             <width>40</width>
@@ -340,7 +340,7 @@
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>408</x>
+     <x>599</x>
      <y>340</y>
     </hint>
    </hints>

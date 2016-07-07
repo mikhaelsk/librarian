@@ -7,6 +7,7 @@ if __name__ == "__main__":
     mygui = QtWidgets.QMainWindow()
     controller = Controller()
     librarian = LibrarianMainWindow( mygui, controller )
+    app.aboutToQuit.connect(controller.SaveModel)
     mygui.show()
     
     sys.exit( app.exec_() )

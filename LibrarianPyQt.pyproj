@@ -37,6 +37,9 @@
     <Folder Include="bin\utils" />
     <Folder Include="bin\views" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Todo and notes.txt" />
+  </ItemGroup>
   <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
 </Project>
