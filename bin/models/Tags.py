@@ -24,6 +24,7 @@ class Tags():
     def AddTag( self, name ):
         self.tagList.append( name )
         self.tagModel.appendRow( QStandardItem( name ) )
+        self.tagModel.sort(Qt.AscendingOrder)
 
     def parseXML( self ):
         xmlParser = QXmlSimpleReader()
