@@ -23,6 +23,9 @@
   <ItemGroup>
     <Compile Include="bin\Controller.py" />
     <Compile Include="bin\models\MainModel.py" />
+    <Compile Include="bin\models\Tags.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="bin\models\__init__.py" />
     <Compile Include="bin\utils\Logger.py" />
     <Compile Include="bin\utils\__init__.py" />

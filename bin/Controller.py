@@ -23,14 +23,8 @@ class LibrarianMainWindow( Ui_MainWindow ):
         self.setupUi( window )
         self.inputPathLine.returnPressed.connect( self.AddFolder )
         self.inputPathLine.returnPressed.connect( self.AddFile )
-        
-
         self.controller.FinalizeInit()
       
-        #self.exitButton.(self.Closing)
-        #self.closing.connect(self.handleCloseEvent)
-        #self.addFolderMenuBut.triggered(self.AddFolder)
-        #self.addFileButton.clicked.connect(self.inputPathLine.update)
         #self.addTagButton.clicked.connect(self.inputTagLine.update)
         #self.deleteTagButton.pressed.connect(self.listView.update)
         #self.inputTagFilter.returnPressed.connect(self.columnView.update)
@@ -67,10 +61,12 @@ class Controller():
     def __init__( self ):
         self.logger = Logger()        
         self.model = MainModel( self )
+        self.tags = Tags( self )
         self.logger.WriteToLog( "Init Done\n" )
 
     def FinalizeInit( self ):
         self.mainwindow.treeView.setModel( self.model.library )
+        self.mainwindow.listView.setModel( self.tags.tagModel )
 
     def PrintToLog( self, txt ):
         self.logger.WriteToLog( txt )
@@ -92,9 +88,9 @@ class Controller():
         if os.path.isfile( txt ):
             self.logger.WriteToLog( 'Added new path: ' + txt )
             self.model.AddFile( txt )  
-        self.mainwindow.numOfDocsLabel.text = self.model.numberOfDocs
+        self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
     
-    def SaveModel(self):
+    def SaveModel( self ):
         pass
 
 

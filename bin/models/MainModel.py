@@ -12,7 +12,7 @@ class MainModel():
         self.controller = myController
         libName = "MyLibrary"
         self.library = QStandardItemModel( 0,1 )
-        self.library.setHeaderData( 0, QtCore.Qt.Horizontal, QtCore.QVariant( "TreeView of Library" ) )
+        self.library.setHeaderData( 0, QtCore.Qt.Horizontal, QtCore.QVariant( "TreeView of Library:" ) )
         self.root = QStandardItem( libName )
         self.controller.PrintToLog( "Library initialized: " + libName )
         #self.nodeId+=1
