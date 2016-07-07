@@ -22,7 +22,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="bin\Controller.py" />
-    <Compile Include="bin\models\Library.py" />
     <Compile Include="bin\models\MainModel.py" />
     <Compile Include="bin\models\__init__.py" />
     <Compile Include="bin\utils\Logger.py" />

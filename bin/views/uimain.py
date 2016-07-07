@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Projects\PyQt0\views\uimain1.ui'
+# Form implementation generated from reading ui file 'uimain.ui'
 #
 # Created by: PyQt5 UI code generator 5.6
 #
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(818, 681)
+        MainWindow.resize(1200, 681)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -69,10 +69,6 @@ class Ui_MainWindow(object):
         self.treeView = QtWidgets.QTreeView(self.centralwidget)
         self.treeView.setObjectName("treeView")
         self.horizontalLayout.addWidget(self.treeView)
-        self.verticalScrollBar_2 = QtWidgets.QScrollBar(self.centralwidget)
-        self.verticalScrollBar_2.setOrientation(QtCore.Qt.Vertical)
-        self.verticalScrollBar_2.setObjectName("verticalScrollBar_2")
-        self.horizontalLayout.addWidget(self.verticalScrollBar_2)
         self.verticalLayout_3.addLayout(self.horizontalLayout)
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
@@ -101,10 +97,6 @@ class Ui_MainWindow(object):
         self.listView = QtWidgets.QListView(self.centralwidget)
         self.listView.setObjectName("listView")
         self.horizontalLayout_5.addWidget(self.listView)
-        self.verticalScrollBar_3 = QtWidgets.QScrollBar(self.centralwidget)
-        self.verticalScrollBar_3.setOrientation(QtCore.Qt.Vertical)
-        self.verticalScrollBar_3.setObjectName("verticalScrollBar_3")
-        self.horizontalLayout_5.addWidget(self.verticalScrollBar_3)
         self.verticalLayout_3.addLayout(self.horizontalLayout_5)
         self.verticalLayout_3.setStretch(0, 10)
         self.verticalLayout_3.setStretch(1, 1)
@@ -113,10 +105,6 @@ class Ui_MainWindow(object):
         self.columnView = QtWidgets.QColumnView(self.centralwidget)
         self.columnView.setObjectName("columnView")
         self.horizontalLayout_4.addWidget(self.columnView)
-        self.verticalScrollBar = QtWidgets.QScrollBar(self.centralwidget)
-        self.verticalScrollBar.setOrientation(QtCore.Qt.Vertical)
-        self.verticalScrollBar.setObjectName("verticalScrollBar")
-        self.horizontalLayout_4.addWidget(self.verticalScrollBar)
         self.horizontalLayout_4.setStretch(0, 10)
         self.horizontalLayout_4.setStretch(1, 20)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
@@ -157,7 +145,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.setStretch(2, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 818, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 21))
         self.menubar.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.menubar.setObjectName("menubar")
         self.menu = QtWidgets.QMenu(self.menubar)
@@ -194,12 +182,6 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.exitButton.triggered.connect(MainWindow.close)
-        self.addFileButton.clicked.connect(self.inputPathLine.update)
-        self.addTagButton.clicked.connect(self.inputTagLine.update)
-        self.deleteTagButton.pressed.connect(self.listView.update)
-        self.inputTagFilter.returnPressed.connect(self.columnView.update)
-
-        
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

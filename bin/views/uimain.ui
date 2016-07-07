@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>818</width>
+    <width>1200</width>
     <height>681</height>
    </rect>
   </property>
@@ -121,20 +121,13 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="10,20,0">
+       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="10,20">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_3" stretch="10,1,10">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QTreeView" name="treeView"/>
-            </item>
-            <item>
-             <widget class="QScrollBar" name="verticalScrollBar_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-             </widget>
             </item>
            </layout>
           </item>
@@ -187,26 +180,12 @@
             <item>
              <widget class="QListView" name="listView"/>
             </item>
-            <item>
-             <widget class="QScrollBar" name="verticalScrollBar_3">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
          </layout>
         </item>
         <item>
          <widget class="QColumnView" name="columnView"/>
-        </item>
-        <item>
-         <widget class="QScrollBar" name="verticalScrollBar">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>
@@ -288,7 +267,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>818</width>
+     <width>1200</width>
      <height>21</height>
     </rect>
    </property>
@@ -351,22 +330,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>addFolderButton</sender>
-   <signal>clicked()</signal>
-   <receiver>inputPathLine</receiver>
-   <slot>showNormal()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>48</x>
-     <y>43</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>151</x>
-     <y>42</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>exitButton</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -379,70 +342,6 @@
     <hint type="destinationlabel">
      <x>408</x>
      <y>340</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>addFileButton</sender>
-   <signal>clicked()</signal>
-   <receiver>inputPathLine</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>129</x>
-     <y>43</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>151</x>
-     <y>42</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>addTagButton</sender>
-   <signal>clicked()</signal>
-   <receiver>inputTagLine</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>266</x>
-     <y>324</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>147</x>
-     <y>323</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>deleteTagButton</sender>
-   <signal>pressed()</signal>
-   <receiver>listView</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>347</x>
-     <y>324</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>187</x>
-     <y>466</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>inputTagFilter</sender>
-   <signal>returnPressed()</signal>
-   <receiver>columnView</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>436</x>
-     <y>610</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>68</x>
-     <y>54</y>
     </hint>
    </hints>
   </connection>
