@@ -15,21 +15,22 @@ class MainModel():
         #currrentTree = os.walk( folderPath )
         for ( paths,dirs,files ) in os.walk( folderPath ):
             for file in files:
-                self.controller.PrintToLog( "Found File: " + paths +"\\"+file)
-                self.AddFile( paths, file )
-
-    def AddFile( self, path, name ):
-        self._AddFileIntro(path, name)
+                self.controller.PrintToLog( "Found File: " + paths + "\\" + file )
+                self._AddFileIntro( paths, file )
         self.controller.UpdateLibraryView()
-        #TODO
 
-    def SaveLibrary(self):
+    def AddFile( self, name ):
+        curPath = os.path.dirname( name )
+        curName = os.path.basename( name )
+        self._AddFileIntro( curPath, curName )
+        self.controller.PrintToLog( "Found File: " + curPath + "\\" + curName )
+
+    def SaveLibrary( self ):
         pass
         #TODO
             
-    def _AddFileIntro(self, path, name ):
-        self.library.AddNode(path, name)
+    def _AddFileIntro( self, path, name ):
+        self.library.AddNode( path, name )
         
         
-
 

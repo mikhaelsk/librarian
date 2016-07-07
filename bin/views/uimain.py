@@ -193,12 +193,13 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_3.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.addFolderButton.clicked.connect(self.inputPathLine.update)
         self.exitButton.triggered.connect(MainWindow.close)
         self.addFileButton.clicked.connect(self.inputPathLine.update)
         self.addTagButton.clicked.connect(self.inputTagLine.update)
         self.deleteTagButton.pressed.connect(self.listView.update)
         self.inputTagFilter.returnPressed.connect(self.columnView.update)
+
+        
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
