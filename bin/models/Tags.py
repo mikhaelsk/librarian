@@ -11,7 +11,7 @@ class Tags():
         - deletening tags
         - loading tags DB
         - saving tags DB
-        """
+    """
     
     def __init__( self, myController ):
         self.controller = myController
@@ -48,17 +48,19 @@ class Tags():
             self.controller.PrintToLog( "Parsing of Tag-library Failed!" )
 
     def SaveTagModel( self ):
-        #if self.wereAnyChanges == False:
-        #    return
+        if self.wereAnyChanges == False:
+            return
         QFile.remove( "myTags_bcp.xml" )
         xmlOldFile = QFile( "myTags.xml" )        
         xmlOldFile.rename( "myTags_bcp.xml" )
 
         xmlWriter = QXmlStreamWriter()
-        xmlFile = QFile( "myTags_new.xml" )
+        xmlFile = QFile( "myTags.xml" )
         
         if ( xmlFile.open( QIODevice.WriteOnly ) == False ):    
-            QMessageBox.warning( 0, "Error!", "Error opening file" )    
+            QMessageBox.warning( 0, "Error!", "Error opening file" )  
+            QFile.remove( "myTags.xml" )
+            xmlOldFile.rename( "myTags.xml" )  
         else :    
             xmlWriter.setDevice( xmlFile )	
             xmlWriter.writeStartDocument()
@@ -71,11 +73,11 @@ class Tags():
             xmlWriter.writeEndElement()
             xmlWriter.writeEndDocument()
         self.controller.PrintToLog( "TagLibrary successfully saved!" )
-        #if everything was written successfully, replace a tag file with new one
-        QFile.remove( "myTags.xml" )
-        xmlFile.rename( "myTags.xml" )
+        #if everything was written successfully, replace a tag file with new
+        #one
+        #QFile.remove( "myTags.xml" )
+        #xmlFile.rename( "myTags.xml" )
 
-        
 class myXmlContentHandler( QXmlDefaultHandler ):    
     def __init__( self, tags ):
         super().__init__()
