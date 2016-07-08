@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TagLibrary>
+	<Intel/>
+	<AMD/>
+	<Programming/>
+	<Python/>
+	<Cpp/>
+	<Csharp/>
+	<ASM/>
+	<VSM/>
+	<SGX/>
+	<GIT/>
+	<Microsoft/>
+	<VisualStudio/>
+	<Windows/>
+	<ServerAdministration/>
+	<Sharepoint/>
+	<PrivateDoc/>
+	<Reports/>
+	<BlackHat/>
+	<Positive/>
+	<Internet/>
+	<Local/>
+	<Hardware/>
+	<Software/>
+	<Linux/>
+	<Ubuntu/>
+	<Nmake/>
+	<Gcc/>
+	<Exploit/>
+	<ZeroDay/>
+	<MyDocumentation/>
+	<Drivers/>
+	<ARM/>
+	<USB/>
+	<Ethernet/>
+	<Ionescu/>
+	<Rootkowska/>
+	<QT/>
+	<Bash/>
+	<Cmd/>
+<TagLibrary/>
