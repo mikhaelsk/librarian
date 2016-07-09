@@ -78,6 +78,13 @@ class Tags():
         #QFile.remove( "myTags.xml" )
         #xmlFile.rename( "myTags.xml" )
 
+    def DelTag( self, selectedIndexes ):
+        for index in selectedIndexes:
+            selectedItem = self.tagModel.itemFromIndex( index )
+            self.tagList.remove( selectedItem.text() )
+            self.tagModel.removeRow( selectedItem.row() )
+            
+
 class myXmlContentHandler( QXmlDefaultHandler ):    
     def __init__( self, tags ):
         super().__init__()
