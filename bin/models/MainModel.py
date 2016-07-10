@@ -2,6 +2,7 @@
 from ..Controller import *
 import os.path
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtCore import *
 #from PyQt5.QtCore import QAbstractTableModel
 class MainModel():
     """files and folders model"""
@@ -43,6 +44,7 @@ class MainModel():
         curName = os.path.basename( name )
         self._AddFileIntro( curPath, curName )
         self.controller.PrintToLog( "Found File: " + curPath + "\\" + curName )
+        self.controller.UpdateLibraryView()
 
     def SaveLibrary( self ):
         pass
@@ -51,10 +53,13 @@ class MainModel():
     def _AddFileIntro( self, path, name ):
         #self.root.AddChild( Node( path + '\\' + name ) )
         currentItem = QStandardItem( path + '\\' + name ) 
+        #currentItem.setFlags( Qt.ItemIsUserCheckable | Qt.ItemIsEnabled | Qt.ItemIsSelectable )
+        #currentItem.setData( QVariant( Qt.Unchecked ), Qt.CheckStateRole )
         self.root.appendRow( currentItem ) 
         self.numberOfDocs += 1
         #for test:
         self.filteredModel.appendRow( [ QStandardItem( name ), QStandardItem( path ) ] )
+        
         #self.itemDictionary.
 '''       
 class FilteredTableModel( QAbstractTableModel ): 

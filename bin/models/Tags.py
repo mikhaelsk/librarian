@@ -1,5 +1,5 @@
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtGui import QStandardItemModel, QStandardItem 
+from PyQt5.QtWidgets import QMessageBox, QCheckBox
 from PyQt5.QtCore import * 
 from PyQt5.QtXml import * 
 import os.path
@@ -31,7 +31,10 @@ class Tags():
 
     def AddTag( self, name ):
         self.tagList.append( name )
-        self.tagModel.appendRow( QStandardItem( name ) )
+        newTag = QStandardItem( name )
+        newTag.setFlags( Qt.ItemIsUserCheckable | Qt.ItemIsEnabled | Qt.ItemIsSelectable )
+        newTag.setData( QVariant( Qt.Unchecked ), Qt.CheckStateRole )
+        self.tagModel.appendRow( newTag )
         self.tagModel.sort( Qt.AscendingOrder )
         self.wereAnyChanges = True
 

@@ -37,6 +37,7 @@ class LibrarianMainWindow( Ui_MainWindow ):
         self.addTagButton.clicked.connect( self.HandleAddTag )
         self.deleteTagButton.clicked.connect( self.HandleDelTag )
         self.listView.setSelectionMode( QAbstractItemView.ExtendedSelection )
+        self.treeView.setSelectionMode( QAbstractItemView.ExtendedSelection )
   
     '''
     Slots for signals:
