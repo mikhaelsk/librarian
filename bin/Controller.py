@@ -68,7 +68,9 @@ class Controller():
     def FinalizeInit( self ):
         self.mainwindow.treeView.setModel( self.model.library )
         self.mainwindow.listView.setModel( self.tags.tagModel )
-
+        self.mainwindow.tableView.setModel( self.model.filteredModel )
+        self.mainwindow.tableView.resizeColumnsToContents()
+        
     def PrintToLog( self, txt ):
         self.logger.WriteToLog( txt )
 
@@ -77,7 +79,8 @@ class Controller():
         #self.mainwindow.columnView.setModel( self.model.library.root.Children)
 
     def UpdateLibraryView( self ):
-        self.mainwindow.columnView.update()
+        pass
+        #self.mainwindow.columnView.update()
 
     def AddFolder( self, txt ):
         if os.path.isdir( txt ):
