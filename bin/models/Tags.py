@@ -16,9 +16,10 @@ class Tags():
     def __init__( self, myController ):
         self.controller = myController
         self.wereAnyChanges = False
-        self.tagList = []
+        self.tagDict = {}
         self.tagModel = QStandardItemModel( 0,1 )
         self.tagModel.setHeaderData( 0, Qt.Horizontal, QVariant( "TagList for Library:" ) )
+        #self.tagModel.itemChanged.connect( self.HandleTagChanged )
         self.InitDefaultTags()
         if os.path.exists( "myTags.xml" ) == False:
             self.controller.PrintToLog( "No Tag library found, created new one" )
@@ -30,13 +31,19 @@ class Tags():
         #self.AddTag( "IMPORTANT" )
 
     def AddTag( self, name ):
-        self.tagList.append( name )
         newTag = QStandardItem( name )
         newTag.setFlags( Qt.ItemIsUserCheckable | Qt.ItemIsEnabled | Qt.ItemIsSelectable )
         newTag.setData( QVariant( Qt.Unchecked ), Qt.CheckStateRole )
+        self.tagDict[ name ] = newTag
         self.tagModel.appendRow( newTag )
         self.tagModel.sort( Qt.AscendingOrder )
         self.wereAnyChanges = True
+
+    #def HandleTagChanged( self, item ):
+    #    if not item.checkState():
+    #        return
+    #    else:
+    #        item.
 
     def LoadTagsFromXML( self ):
         xmlParser = QXmlSimpleReader()
@@ -69,8 +76,8 @@ class Tags():
             xmlWriter.writeStartDocument()
             xmlWriter.writeStartElement( "TagLibrary" )
             
-            for tagItem in self.tagList:
-                xmlWriter.writeStartElement( tagItem )
+            for tagName in self.tagDict.keys():
+                xmlWriter.writeStartElement( tagName )
                 xmlWriter.writeEndElement() 
                 xmlWriter.autoFormattingIndent()
             xmlWriter.writeEndElement()
@@ -84,7 +91,7 @@ class Tags():
     def DelTag( self, selectedIndexes ):
         for index in selectedIndexes:
             selectedItem = self.tagModel.itemFromIndex( index )
-            self.tagList.remove( selectedItem.text() )
+            del self.tagDict[ selectedItem.text() ]
             self.tagModel.removeRow( selectedItem.row() )
             
 

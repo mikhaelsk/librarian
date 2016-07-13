@@ -23,6 +23,7 @@ class LibrarianMainWindow( Ui_MainWindow ):
         self.inputPathLine.returnPressed.connect( self.AddFolder )
         self.inputPathLine.returnPressed.connect( self.AddFile )
         self.inputTagLine.returnPressed.connect( self.HandleAddTag )
+        self.inputTagFilter.returnPressed.connect( self.HandleTagsApplied )
         self.controller.FinalizeInit()
       
         #self.addTagButton.clicked.connect(self.inputTagLine.update)
@@ -36,8 +37,12 @@ class LibrarianMainWindow( Ui_MainWindow ):
         self.exitButton.triggered.connect( self.HandleClose )
         self.addTagButton.clicked.connect( self.HandleAddTag )
         self.deleteTagButton.clicked.connect( self.HandleDelTag )
-        self.listView.setSelectionMode( QAbstractItemView.ExtendedSelection )
+        self.listView.doubleClicked.connect( self.HandleClickOnTag )
+        #self.listView.setSelectionMode( QAbstractItemView.ExtendedSelection )
         self.treeView.setSelectionMode( QAbstractItemView.ExtendedSelection )
+        self.setTagsButton.clicked.connect( self.HandleSetTags )
+        self.updateFilterButton.clicked.connect( self.HandleTagsApplied )
+        
   
     '''
     Slots for signals:
@@ -58,13 +63,30 @@ class LibrarianMainWindow( Ui_MainWindow ):
     def HandleDelTag( self ):
         self.controller.DelTag( self.listView.selectedIndexes() )
 
+    def HandleSetTags( self ):
+        self.controller.HandleSetTags()
 
+    def HandleClickOnTag( self ):
+        index = self.listView.selectedIndexes()[ 0 ]
+        tagStr = self.controller.GetTagTextByIndex( index )
+        self.inputTagFilter.setText( self.inputTagFilter.text() + tagStr + ' ' )
+        #self.controller.nowActiveTags.add( tagStr )
+
+    def HandleTagsApplied( self ):
+        listOfTagsInStr = self.inputTagFilter.text().split()
+        self.controller.FilterTheModel( listOfTagsInStr )
+        
+        #TODO files list
+        #self.controller.SetTagsForItems()
 class Controller():
     def __init__( self ):
         self.logger = Logger()        
         self.model = MainModel( self )
         self.tags = Tags( self )
         self.logger.WriteToLog( "Init Done\n" )
+        self.tagToItemDict = {}
+        self.tagToNumOfDocsDict = {}
+        self.nowActiveTags = set()
 
     def FinalizeInit( self ):
         self.mainwindow.treeView.setModel( self.model.library )
@@ -94,7 +116,18 @@ class Controller():
             self.logger.WriteToLog( 'Added new path: ' + txt )
             self.model.AddFile( txt )  
         self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
-    
+
+        '''
+    def AddTagsForFiles( self, fileItems, tags ):
+        for currFile in fileItems:
+            for tag in tags:
+                if tag in self.tagToItemDict.keys():
+                    self.tagToItemDict[ tag ].append( currFile )                    
+                else:
+                    self.tagToItemDict[ tag ] = []
+                #self.tagToItemDict[tag]
+         '''
+
     def SaveModel( self ):
         self.tags.SaveTagModel()
 
@@ -104,4 +137,43 @@ class Controller():
     def DelTag( self, selectedItemIndexes ):
         self.tags.DelTag( selectedItemIndexes )
 
+    def HandleSetTags( self ):
+        tagsSelected = []
+        selectedIndexesInTreeView = self.mainwindow.treeView.selectedIndexes()
+        count = len( selectedIndexesInTreeView )
+        for tagName in self.tags.tagDict.keys():
+            tagItem = self.tags.tagDict[ tagName ]
+            if tagItem.checkState() == Qt.Checked:
+                tagsSelected.append( tagName )
+                if tagName in self.tagToItemDict.keys():
+                    self.tagToNumOfDocsDict[ tagName ] += count
+                else:
+                    self.tagToNumOfDocsDict[ tagName ] = count
+                    self.tagToItemDict[ tagName ] = [] #set()
+                
+        #fill the tag to item dictionary
+        for index in selectedIndexesInTreeView:
+             item = self.model.library.itemFromIndex( index )
+             for tag in tagsSelected:
+                 self.tagToItemDict[ tag ].append( item.text() )
+                 #add( item.text() )
 
+    def GetTagTextByIndex( self,index ):
+        return self.tags.tagModel.itemFromIndex( index ).text()
+
+    def FilterTheModel( self, listOfTags ):
+        #arrange tags by the minimal count of documents with this tag:
+        
+        currentTagToNumOfDocsDict = {}
+        for tagName in listOfTags:
+            currentTagToNumOfDocsDict[ tagName ] = self.tagToNumOfDocsDict[ tagName ]
+        lambdaFunc = lambda x: x[ 1 ]
+        currentTagToNumOfDocsDict = sorted( currentTagToNumOfDocsDict.items(), key=lambdaFunc, reverse=False )
+        lengthOfList = len( listOfTags )
+        currentItemList = set(self.tagToItemDict[ currentTagToNumOfDocsDict[ 0 ][0] ])
+        countOfIntersections = 1
+        while countOfIntersections < lengthOfList:
+            currentItemList = currentItemList & set(self.tagToItemDict[currentTagToNumOfDocsDict[ countOfIntersections ][0]])
+            countOfIntersections += 1
+            
+        self.model.UpdateFilteredModel(currentItemList)

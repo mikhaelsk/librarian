@@ -21,7 +21,7 @@ class MainModel():
         self.root = QStandardItem( libName )
         self.controller.PrintToLog( "Library initialized: " + libName )
         self.library.appendRow( self.root )
-        self.itemDictionary = {}
+        
         '''
         now setup the filtered model for tableView
         '''
@@ -53,14 +53,21 @@ class MainModel():
     def _AddFileIntro( self, path, name ):
         #self.root.AddChild( Node( path + '\\' + name ) )
         currentItem = QStandardItem( path + '\\' + name ) 
-        #currentItem.setFlags( Qt.ItemIsUserCheckable | Qt.ItemIsEnabled | Qt.ItemIsSelectable )
+        #currentItem.setFlags( Qt.ItemIsUserCheckable | Qt.ItemIsEnabled |
+        #Qt.ItemIsSelectable )
         #currentItem.setData( QVariant( Qt.Unchecked ), Qt.CheckStateRole )
         self.root.appendRow( currentItem ) 
         self.numberOfDocs += 1
         #for test:
         self.filteredModel.appendRow( [ QStandardItem( name ), QStandardItem( path ) ] )
         
-        #self.itemDictionary.
+    def UpdateFilteredModel( self, itemNameList ):
+        self.filteredModel.clear()
+        for itemName in itemNameList:
+            curPath = os.path.dirname( itemName )
+            curName = os.path.basename( itemName )
+            self.filteredModel.appendRow( [ QStandardItem( curName ), QStandardItem( curPath ) ] )
+
 '''       
 class FilteredTableModel( QAbstractTableModel ): 
     def __init__( self, headerdata, parent = None, *args ): 
