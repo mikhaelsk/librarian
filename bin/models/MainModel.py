@@ -21,6 +21,8 @@ class MainModel():
         self.root = QStandardItem( libName )
         self.controller.PrintToLog( "Library initialized: " + libName )
         self.library.appendRow( self.root )
+        #self.itemNameToItemDict = {}
+        self.itemNameList = []
         
         '''
         now setup the filtered model for tableView
@@ -35,44 +37,60 @@ class MainModel():
         for ( paths,dirs,files ) in os.walk( folderPath ):
             for file in files:
                 self.controller.PrintToLog( "Found File: " + paths + "\\" + file )
-                self._AddFileIntro( paths, file )
+                self._AddFileIntro( paths + '\\' + file )
         self.controller.UpdateLibraryView()
         
 
     def AddFile( self, name ):
-        curPath = os.path.dirname( name )
-        curName = os.path.basename( name )
-        self._AddFileIntro( curPath, curName )
-        self.controller.PrintToLog( "Found File: " + curPath + "\\" + curName )
+        self._AddFileIntro( name )
+        self.controller.PrintToLog( "Found File: " + name )
         self.controller.UpdateLibraryView()
 
     def SaveLibrary( self ):
         pass
         #TODO
             
-    def _AddFileIntro( self, path, name ):
+    def _AddFileIntro( self, pathAndName ):
         #self.root.AddChild( Node( path + '\\' + name ) )
-        currentItem = QStandardItem( path + '\\' + name ) 
+        curPath = os.path.dirname( pathAndName )
+        curName = os.path.basename( pathAndName )
+        currentItem = QStandardItem( pathAndName ) 
         #currentItem.setFlags( Qt.ItemIsUserCheckable | Qt.ItemIsEnabled |
         #Qt.ItemIsSelectable )
         #currentItem.setData( QVariant( Qt.Unchecked ), Qt.CheckStateRole )
         self.root.appendRow( currentItem ) 
+        #self.itemNameToItemDict[ pathAndName ] = currentItem
+        self.itemNameList.append( pathAndName )
         self.numberOfDocs += 1
         #for test:
-        self.filteredModel.appendRow( [ QStandardItem( name ), QStandardItem( path ) ] )
+        self.filteredModel.appendRow( [ QStandardItem( curName ), QStandardItem( curPath ) ] )
         
     def UpdateFilteredModel( self, itemNameList ):
         self.filteredModel.clear()
-        for itemName in itemNameList:
-            curPath = os.path.dirname( itemName )
-            curName = os.path.basename( itemName )
-            self.filteredModel.appendRow( [ QStandardItem( curName ), QStandardItem( curPath ) ] )
+        self.filteredModel.setHorizontalHeaderLabels( [ "Library filtered by tag", "path to file" ] )
+        if itemNameList == {}:
+            #for itemName in self.itemNameToItemDict.keys():
+            for itemName in self.itemNameList:
+                curPath = os.path.dirname( itemName )
+                curName = os.path.basename( itemName )
+                self.filteredModel.appendRow( [ QStandardItem( curName ), QStandardItem( curPath ) ] )
+        elif itemNameList == None:
+            self.controller.RefreshFilteredView()
+        else:
+            for itemName in itemNameList:
+                curPath = os.path.dirname( itemName )
+                curName = os.path.basename( itemName )
+                self.filteredModel.appendRow( [ QStandardItem( curName ), QStandardItem( curPath ) ] )
+        self.controller.RefreshFilteredView()
 
     def DelItems( self, indexes ):
         for index in indexes:
             itemToDelete = self.library.itemFromIndex( index )
+            #del self.itemNameToItemDict[ itemToDelete.text() ]
+            self.itemNameList.remove( itemToDelete.text() )
             self.root.removeRow( itemToDelete.row() )
-            # self.filteredModel.
+            self.UpdateFilteredModel( {} )
+            
             
 '''       
 class FilteredTableModel( QAbstractTableModel ): 

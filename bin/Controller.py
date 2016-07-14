@@ -113,12 +113,14 @@ class Controller():
             self.logger.WriteToLog( 'Added new path: ' + txt )
             self.model.AddFolder( txt )  
         self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
+        self.mainwindow.tableView.resizeColumnsToContents()
     
     def AddFile( self, txt ):
         if os.path.isfile( txt ):
             self.logger.WriteToLog( 'Added new path: ' + txt )
             self.model.AddFile( txt )  
         self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
+        self.mainwindow.tableView.resizeColumnsToContents()
 
         '''
     def AddTagsForFiles( self, fileItems, tags ):
@@ -168,18 +170,25 @@ class Controller():
         #arrange tags by the minimal count of documents with this tag:
         
         currentTagToNumOfDocsDict = {}
-        for tagName in listOfTags:
-            currentTagToNumOfDocsDict[ tagName ] = self.tagToNumOfDocsDict[ tagName ]
-        lambdaFunc = lambda x: x[ 1 ]
-        currentTagToNumOfDocsDict = sorted( currentTagToNumOfDocsDict.items(), key=lambdaFunc, reverse=False )
-        lengthOfList = len( listOfTags )
-        currentItemList = set( self.tagToItemDict[ currentTagToNumOfDocsDict[ 0 ][ 0 ] ] )
-        countOfIntersections = 1
-        while countOfIntersections < lengthOfList:
-            currentItemList = currentItemList & set( self.tagToItemDict[ currentTagToNumOfDocsDict[ countOfIntersections ][ 0 ] ] )
-            countOfIntersections += 1
-            
-        self.model.UpdateFilteredModel( currentItemList )
+        try:
+            for tagName in listOfTags:
+                currentTagToNumOfDocsDict[ tagName ] = self.tagToNumOfDocsDict[ tagName ]
+        except KeyError:
+            currentItemList = None 
+        else:
+            lambdaFunc = lambda x: x[ 1 ]
+            currentTagToNumOfDocsDict = sorted( currentTagToNumOfDocsDict.items(), key=lambdaFunc, reverse=False )
+            lengthOfList = len( listOfTags )
+            currentItemList = set( self.tagToItemDict[ currentTagToNumOfDocsDict[ 0 ][ 0 ] ] )
+            countOfIntersections = 1
+            while countOfIntersections < lengthOfList:
+                currentItemList = currentItemList & set( self.tagToItemDict[ currentTagToNumOfDocsDict[ countOfIntersections ][ 0 ] ] )
+                countOfIntersections += 1
+        finally:           
+            self.model.UpdateFilteredModel( currentItemList )
 
     def DelFilesFromLib( self, indexes ):
         self.model.DelItems( indexes )
+
+    def RefreshFilteredView(self):
+        self.mainwindow.tableView.resizeColumnsToContents()
