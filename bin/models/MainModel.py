@@ -72,7 +72,7 @@ class MainModel():
         for index in indexes:
             itemToDelete = self.library.itemFromIndex( index )
             self.root.removeRow( itemToDelete.row() )
-            self.filteredModel.
+            # self.filteredModel.
             
 '''       
 class FilteredTableModel( QAbstractTableModel ): 
