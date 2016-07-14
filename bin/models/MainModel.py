@@ -68,6 +68,12 @@ class MainModel():
             curName = os.path.basename( itemName )
             self.filteredModel.appendRow( [ QStandardItem( curName ), QStandardItem( curPath ) ] )
 
+    def DelItems( self, indexes ):
+        for index in indexes:
+            itemToDelete = self.library.itemFromIndex( index )
+            self.root.removeRow( itemToDelete.row() )
+            self.filteredModel.
+            
 '''       
 class FilteredTableModel( QAbstractTableModel ): 
     def __init__( self, headerdata, parent = None, *args ): 

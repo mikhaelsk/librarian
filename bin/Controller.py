@@ -37,6 +37,7 @@ class LibrarianMainWindow( Ui_MainWindow ):
         self.exitButton.triggered.connect( self.HandleClose )
         self.addTagButton.clicked.connect( self.HandleAddTag )
         self.deleteTagButton.clicked.connect( self.HandleDelTag )
+        self.delFileFromLibButton.clicked.connect( self.HandleDelFileFromLib )
         self.listView.doubleClicked.connect( self.HandleClickOnTag )
         #self.listView.setSelectionMode( QAbstractItemView.ExtendedSelection )
         self.treeView.setSelectionMode( QAbstractItemView.ExtendedSelection )
@@ -75,6 +76,9 @@ class LibrarianMainWindow( Ui_MainWindow ):
     def HandleTagsApplied( self ):
         listOfTagsInStr = self.inputTagFilter.text().split()
         self.controller.FilterTheModel( listOfTagsInStr )
+
+    def HandleDelFileFromLib( self ):
+        self.controller.DelFilesFromLib( self.treeView.selectedIndexes() )
         
         #TODO files list
         #self.controller.SetTagsForItems()
@@ -102,8 +106,7 @@ class Controller():
         #self.mainwindow.columnView.setModel( self.model.library.root.Children)
 
     def UpdateLibraryView( self ):
-        pass
-        #self.mainwindow.columnView.update()
+        self.mainwindow.treeView.setModel( self.model.library )
 
     def AddFolder( self, txt ):
         if os.path.isdir( txt ):
@@ -158,7 +161,7 @@ class Controller():
                  self.tagToItemDict[ tag ].append( item.text() )
                  #add( item.text() )
 
-    def GetTagTextByIndex( self,index ):
+    def GetTagTextByIndex( self, index ):
         return self.tags.tagModel.itemFromIndex( index ).text()
 
     def FilterTheModel( self, listOfTags ):
@@ -170,10 +173,13 @@ class Controller():
         lambdaFunc = lambda x: x[ 1 ]
         currentTagToNumOfDocsDict = sorted( currentTagToNumOfDocsDict.items(), key=lambdaFunc, reverse=False )
         lengthOfList = len( listOfTags )
-        currentItemList = set(self.tagToItemDict[ currentTagToNumOfDocsDict[ 0 ][0] ])
+        currentItemList = set( self.tagToItemDict[ currentTagToNumOfDocsDict[ 0 ][ 0 ] ] )
         countOfIntersections = 1
         while countOfIntersections < lengthOfList:
-            currentItemList = currentItemList & set(self.tagToItemDict[currentTagToNumOfDocsDict[ countOfIntersections ][0]])
+            currentItemList = currentItemList & set( self.tagToItemDict[ currentTagToNumOfDocsDict[ countOfIntersections ][ 0 ] ] )
             countOfIntersections += 1
             
-        self.model.UpdateFilteredModel(currentItemList)
+        self.model.UpdateFilteredModel( currentItemList )
+
+    def DelFilesFromLib( self, indexes ):
+        self.model.DelItems( indexes )
