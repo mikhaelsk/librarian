@@ -113,6 +113,7 @@ class Controller():
             self.logger.WriteToLog( 'Added new path: ' + txt )
             self.model.AddFolder( txt )  
         self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
+        self.mainwindow.numOfTagedDocsLabel.setText( str( self.model.numberOfTagedDocs ) )
         self.mainwindow.tableView.resizeColumnsToContents()
     
     def AddFile( self, txt ):
@@ -120,18 +121,8 @@ class Controller():
             self.logger.WriteToLog( 'Added new path: ' + txt )
             self.model.AddFile( txt )  
         self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
+        self.mainwindow.numOfTagedDocsLabel.setText( str( self.model.numberOfTagedDocs ) )
         self.mainwindow.tableView.resizeColumnsToContents()
-
-        '''
-    def AddTagsForFiles( self, fileItems, tags ):
-        for currFile in fileItems:
-            for tag in tags:
-                if tag in self.tagToItemDict.keys():
-                    self.tagToItemDict[ tag ].append( currFile )                    
-                else:
-                    self.tagToItemDict[ tag ] = []
-                #self.tagToItemDict[tag]
-         '''
 
     def SaveModel( self ):
         self.tags.SaveTagModel()
@@ -160,7 +151,7 @@ class Controller():
         for index in selectedIndexesInTreeView:
              item = self.model.library.itemFromIndex( index )
              for tag in tagsSelected:
-                 self.tagToItemDict[ tag ].append( item.text() )
+                 self.tagToItemDict[ tag ].append( item.accessibleText() )
                  #add( item.text() )
 
     def GetTagTextByIndex( self, index ):
@@ -168,7 +159,8 @@ class Controller():
 
     def FilterTheModel( self, listOfTags ):
         #arrange tags by the minimal count of documents with this tag:
-        
+        if listOfTags == []:
+            return
         currentTagToNumOfDocsDict = {}
         try:
             for tagName in listOfTags:
@@ -186,6 +178,7 @@ class Controller():
                 countOfIntersections += 1
         finally:           
             self.model.UpdateFilteredModel( currentItemList )
+            self.mainwindow.numOfTagedDocsLabel.setText( str( self.model.numberOfTagedDocs ) )
 
     def DelFilesFromLib( self, indexes ):
         self.model.DelItems( indexes )
