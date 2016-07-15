@@ -354,8 +354,13 @@
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="addFolderMenuBut"/>
     <addaction name="addFileMenuBut"/>
+    <addaction name="addFolderMenuBut"/>
+    <addaction name="separator"/>
+    <addaction name="createLibraryButton"/>
+    <addaction name="openLibraryButton"/>
+    <addaction name="separator"/>
+    <addaction name="saveLibraryButton"/>
     <addaction name="separator"/>
     <addaction name="exitButton"/>
    </widget>
@@ -397,9 +402,24 @@
     <string>About</string>
    </property>
   </action>
+  <action name="openLibraryButton">
+   <property name="text">
+    <string>Open Library</string>
+   </property>
+  </action>
   <action name="exitButton">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="createLibraryButton">
+   <property name="text">
+    <string>Create New Library</string>
+   </property>
+  </action>
+  <action name="saveLibraryButton">
+   <property name="text">
+    <string>Save Library and Tags</string>
    </property>
   </action>
  </widget>

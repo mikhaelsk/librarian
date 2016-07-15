@@ -15,12 +15,12 @@ class MainModel():
         '''
         setup complete library model for treeView
         '''
-        libName = "MyLibrary"
+        #libName = "MyLibrary"
         self.library = QStandardItemModel( 0,1 )
         self.library.setHeaderData( 0, QtCore.Qt.Horizontal, QtCore.QVariant( "TreeView of Library:" ) )
-        self.root = QStandardItem( libName )
-        self.controller.PrintToLog( "Library initialized: " + libName )
-        self.library.appendRow( self.root )
+        #self.root = QStandardItem( libName )
+        #self.controller.PrintToLog( "Library initialized: " + libName )  
+        #self.library.appendRow( self.root )
         self.itemNameToItemDict = {}
         #self.itemNameList = []
         
@@ -30,7 +30,12 @@ class MainModel():
         self.filteredModel = QStandardItemModel( 0,1 )
         self.filteredModel.setColumnCount( 2 )
         self.filteredModel.setHorizontalHeaderLabels( [ "Library filtered by tag", "path to file" ] )
-        
+    
+    def InitLibrary( self, libName = "MyLibrary" ):
+        self.root = QStandardItem( libName )
+        self.library.appendRow( self.root )  
+        self.controller.PrintToLog( "Library initialized: " + libName )  
+           
     def AddFolder( self, folderPath ):
         for ( paths,dirs,files ) in os.walk( folderPath ):
             for file in files:
@@ -47,6 +52,10 @@ class MainModel():
         self._AddFileIntro( pathAndName, pathList, curName )
         self.controller.PrintToLog( "Found File: " + name )
         self.controller.UpdateLibraryView()
+
+    def OpenLibrary( self ):
+        pass
+        #TODO
 
     def SaveLibrary( self ):
         pass
