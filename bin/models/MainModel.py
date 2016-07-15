@@ -21,8 +21,8 @@ class MainModel():
         self.root = QStandardItem( libName )
         self.controller.PrintToLog( "Library initialized: " + libName )
         self.library.appendRow( self.root )
-        #self.itemNameToItemDict = {}
-        self.itemNameList = []
+        self.itemNameToItemDict = {}
+        #self.itemNameList = []
         
         '''
         now setup the filtered model for tableView
@@ -37,12 +37,16 @@ class MainModel():
         for ( paths,dirs,files ) in os.walk( folderPath ):
             for file in files:
                 self.controller.PrintToLog( "Found File: " + paths + "\\" + file )
-                self._AddFileIntro( paths + '\\' + file )
+                pathList = self.ParseDirPath( paths )
+                self._AddFileIntro( paths + "\\" + file, pathList, file )
         self.controller.UpdateLibraryView()
         
 
-    def AddFile( self, name ):
-        self._AddFileIntro( name )
+    def AddFile( self, pathAndName ):
+        curPath = os.path.dirname( pathAndName )
+        curName = os.path.basename( pathAndName )
+        pathList = self.ParseDirPath( curPath )
+        self._AddFileIntro( pathAndName, pathList, curName )
         self.controller.PrintToLog( "Found File: " + name )
         self.controller.UpdateLibraryView()
 
@@ -50,30 +54,65 @@ class MainModel():
         pass
         #TODO
             
-    def _AddFileIntro( self, pathAndName ):
+    def _AddFileIntro( self, pathAndName, pathList, fileName ):
         #self.root.AddChild( Node( path + '\\' + name ) )
-        curPath = os.path.dirname( pathAndName )
-        curName = os.path.basename( pathAndName )
-        currentItem = QStandardItem( pathAndName ) 
+        #TODO add folders and file
+        accumulated = ""
+        previousItem = self.root
+        for dir in pathList:
+            accumulated = accumulated + "\\" + dir
+            if accumulated in self.itemNameToItemDict.keys():
+                previousItem = self.itemNameToItemDict[ accumulated ] [0]
+            else:
+                newDirItem = QStandardItem( dir )
+                newDirItem.setAccessibleText( accumulated )
+                newDirItem.setAccessibleDescription( "dir" )
+                previousItem.appendRow( newDirItem )
+                self.itemNameToItemDict[ accumulated ] = [newDirItem, previousItem]
+                previousItem = newDirItem
+                
+                                
+        currentItem = QStandardItem( fileName )
+        currentItem.setAccessibleText( pathAndName )
+        #currentItem.accessibleText = pathAndName
         #currentItem.setFlags( Qt.ItemIsUserCheckable | Qt.ItemIsEnabled |
         #Qt.ItemIsSelectable )
         #currentItem.setData( QVariant( Qt.Unchecked ), Qt.CheckStateRole )
-        self.root.appendRow( currentItem ) 
-        #self.itemNameToItemDict[ pathAndName ] = currentItem
-        self.itemNameList.append( pathAndName )
+        previousItem.appendRow( currentItem ) 
+        self.itemNameToItemDict[ pathAndName ] = [currentItem, previousItem]
+        #self.itemNameList.append( pathAndName )
         self.numberOfDocs += 1
         #for test:
-        self.filteredModel.appendRow( [ QStandardItem( curName ), QStandardItem( curPath ) ] )
-        
+        curPath = os.path.dirname( pathAndName )
+        self.filteredModel.appendRow( [ QStandardItem( fileName ), QStandardItem( curPath ) ] )
+    
+    def ParseDirPath( self, dirPath ):
+        currentDriveAndPath = os.path.splitdrive( dirPath )
+        currentDrive = currentDriveAndPath[ 0 ]
+        curPath = currentDriveAndPath[ 1 ]
+        folders = []
+        while 1:
+            curPath, folder = os.path.split( curPath )
+            if folder != "":
+                folders.append( folder )
+            else:
+                if curPath != "" and curPath != "\\":
+                    folders.append( curPath )
+                break
+        folders.reverse()
+        folders.insert( 0, currentDrive )
+        return folders
+          
     def UpdateFilteredModel( self, itemNameList ):
         self.filteredModel.clear()
         self.filteredModel.setHorizontalHeaderLabels( [ "Library filtered by tag", "path to file" ] )
         if itemNameList == {}:
-            #for itemName in self.itemNameToItemDict.keys():
-            for itemName in self.itemNameList:
-                curPath = os.path.dirname( itemName )
-                curName = os.path.basename( itemName )
-                self.filteredModel.appendRow( [ QStandardItem( curName ), QStandardItem( curPath ) ] )
+            #for itemName in self.itemNameList:
+            for itemName in self.itemNameToItemDict.keys():
+                if self.itemNameToItemDict[ itemName ][0].accessibleDescription() != "dir":
+                    curPath = os.path.dirname( itemName )
+                    curName = os.path.basename( itemName )
+                    self.filteredModel.appendRow( [ QStandardItem( curName ), QStandardItem( curPath ) ] )
         elif itemNameList == None:
             self.controller.RefreshFilteredView()
         else:
@@ -86,66 +125,11 @@ class MainModel():
     def DelItems( self, indexes ):
         for index in indexes:
             itemToDelete = self.library.itemFromIndex( index )
-            #del self.itemNameToItemDict[ itemToDelete.text() ]
-            self.itemNameList.remove( itemToDelete.text() )
-            self.root.removeRow( itemToDelete.row() )
+            previousItem = self.itemNameToItemDict[ itemToDelete.accessibleText() ][1]
+            del self.itemNameToItemDict[ itemToDelete.accessibleText() ]
+            #self.itemNameList.remove( itemToDelete.text() )
+            previousItem.removeRow( itemToDelete.row() )
+            self.numberOfDocs -= 1
             self.UpdateFilteredModel( {} )
             
-            
-'''       
-class FilteredTableModel( QAbstractTableModel ): 
-    def __init__( self, headerdata, parent = None, *args ): 
-       
-        QAbstractTableModel.__init__( self, parent, *args ) 
-        self.arrayData = [ [] ]
-        self.headerData = headerdata
- 
-    def rowCount( self, parent ): 
-        return len( self.arrayData ) 
- 
-    def columnCount( self, parent ): 
-        return len( self.arrayData[ 0 ] ) 
- 
-    def Data( self, index, role ): 
-        if not index.isValid(): 
-            return QVariant() 
-        elif role != Qt.DisplayRole: 
-            return QVariant() 
-        return QVariant( self.arrayData[ index.row() ][ index.column() ] ) 
 
-    def HeaderData( self, col, orientation, role ):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return QVariant( self.headerData[ col ] )
-        return QVariant()
-'''
-
-'''
-folders = []
-os.path.realpath(path)
-while 1:
-    path, folder = os.path.split(path)
-
-    if folder != "":
-        folders.append(folder)
-    else:
-        if path != "":
-            folders.append(path)
-
-        break
-
-folders.reverse()
-'''
-
-'''
-class Node(QStandardItem):
-    def __init__( self, nameTxt ):      
-        self.name = nameTxt
-        self.children = []
-    
-    @property
-    def Children( self ):
-        return self.children
-
-    def AddChild( self, node ):
-        self.children.append( node )
-'''

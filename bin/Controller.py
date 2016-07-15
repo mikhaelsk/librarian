@@ -189,6 +189,7 @@ class Controller():
 
     def DelFilesFromLib( self, indexes ):
         self.model.DelItems( indexes )
+        self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
 
     def RefreshFilteredView(self):
         self.mainwindow.tableView.resizeColumnsToContents()
