@@ -393,6 +393,9 @@
    </property>
   </action>
   <action name="addFileMenuBut">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Add File</string>
    </property>
@@ -408,6 +411,9 @@
    </property>
   </action>
   <action name="exitButton">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>

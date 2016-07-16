@@ -29,6 +29,7 @@
     <Compile Include="bin\models\__init__.py" />
     <Compile Include="bin\utils\Logger.py" />
     <Compile Include="bin\utils\__init__.py" />
+    <Compile Include="bin\views\ClosingLibrarianDialog.py" />
     <Compile Include="bin\views\uimain.py" />
     <Compile Include="bin\views\__init__.py" />
     <Compile Include="bin\__init__.py" />

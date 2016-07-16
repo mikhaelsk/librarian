@@ -8,6 +8,7 @@ if __name__ == "__main__":
     controller = Controller()
     librarian = LibrarianMainWindow( mygui, controller )
     app.aboutToQuit.connect(controller.SaveModel)
+    #app.setQuitLockEnabled= True
     mygui.show()
     
     sys.exit( app.exec_() )

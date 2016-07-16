@@ -76,7 +76,12 @@ class Tags():
             xmlWriter.writeStartDocument()
             xmlWriter.writeStartElement( "TagLibrary" )
             
-            for tagName in self.tagDict.keys():
+            #lambdaFunc = lambda x: x[ 1 ]
+            #self.tagDict = sorted( self.tagDict.keys(), key=lambdaFunc,
+            #reverse=False )
+            klist =  list( self.tagDict.keys() )
+            klist.sort() 
+            for tagName in klist:
                 xmlWriter.writeStartElement( tagName )
                 xmlWriter.writeEndElement() 
                 xmlWriter.autoFormattingIndent()
