@@ -39,12 +39,6 @@ class Tags():
         self.tagModel.sort( Qt.AscendingOrder )
         self.wereAnyChanges = True
 
-    #def HandleTagChanged( self, item ):
-    #    if not item.checkState():
-    #        return
-    #    else:
-    #        item.
-
     def LoadTagsFromXML( self ):
         xmlParser = QXmlSimpleReader()
         xmlContentHandler = myXmlContentHandler( self )
@@ -76,9 +70,6 @@ class Tags():
             xmlWriter.writeStartDocument()
             xmlWriter.writeStartElement( "TagLibrary" )
             
-            #lambdaFunc = lambda x: x[ 1 ]
-            #self.tagDict = sorted( self.tagDict.keys(), key=lambdaFunc,
-            #reverse=False )
             klist =  list( self.tagDict.keys() )
             klist.sort() 
             for tagName in klist:
@@ -108,13 +99,6 @@ class myXmlContentHandler( QXmlDefaultHandler ):
     def startElement( self, nameSpaceURI, localName, qName, atts ):
         if localName != "TagLibrary":
             self.myTags.AddTag( localName )
-        #print( "Read Start Tag : " + localName + "\n" )
-        #print( "Tag Attributes: " )
-        #for num in range( 0, atts.length() ):
-        #    self.controller.PrintToLog( atts.type( num ) + "=" + atts.value(
-        #    num ) + "\n" )
-        #    self.controller.PrintToLog(
-        #    "#####################################\n\n" )
         return True
 
 

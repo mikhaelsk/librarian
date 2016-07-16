@@ -46,6 +46,7 @@ class LibrarianMainWindow( Ui_MainWindow ):
         self.createLibraryButton.triggered.connect( self.HandleCreateLib )
         self.openLibraryButton.triggered.connect( self.HandleOpenLib ) 
         self.saveLibraryButton.triggered.connect( self.HandleSaveLib )       
+        self.saveLibraryToFileButton.triggered.connect( self.HandleSaveLibToFile )       
   
     '''
     Slots for signals:
@@ -100,8 +101,13 @@ class LibrarianMainWindow( Ui_MainWindow ):
     def HandleSaveLib( self ):
         self.controller.SaveModel()
 
+    def HandleSaveLibToFile( self ):
+        fname = QFileDialog.getSaveFileName( caption = 'Save Library to File', filter="Libraries (*.lib)" )[ 0 ]
+        self.controller.SaveModel( fname )
+
     def EnableDisableExitButton( self, state ):
-        self.saveLibraryButton.setEnabled(not state)
+        self.saveLibraryButton.setEnabled( not state )
+        self.saveLibraryToFileButton.setEnabled( not state )
         self.exitButton.setEnabled( state ) 
         QApplication.processEvents()
 
@@ -124,7 +130,9 @@ class Controller():
         self.tagToItemDict = {}
         self.tagToNumOfDocsDict = {}
         self.nowActiveTags = set()
-        self.wereAnyChanges = False
+        self.wereAnyChangesInModel = False
+        self.wereAnyChangesInTags = False
+        self.currentLibFileName = None
 
     def FinalizeInit( self ):
         self.mainwindow.treeView.setModel( self.model.library )
@@ -150,7 +158,7 @@ class Controller():
         self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
         self.mainwindow.numOfTagedDocsLabel.setText( str( self.model.numberOfTagedDocs ) )
         self.mainwindow.tableView.resizeColumnsToContents()
-        self.wereAnyChanges = True
+        self.wereAnyChangesInModel = True
         #self.mainwindow.EnableDisableExitButton( False )
     
     def AddFile( self, txt ):
@@ -160,14 +168,22 @@ class Controller():
         self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
         self.mainwindow.numOfTagedDocsLabel.setText( str( self.model.numberOfTagedDocs ) )
         self.mainwindow.tableView.resizeColumnsToContents()
-        self.wereAnyChanges = True
+        self.wereAnyChangesInModel = True
         self.mainwindow.EnableDisableExitButton( False )
 
-    def SaveModel( self ):
-        if self.wereAnyChanges == True:
-            self.model.SaveLibrary()
+    def SaveModel( self, filename = None ):
+        if self.wereAnyChangesInTags ==True:
             self.tags.SaveTagModel()
-            self.wereAnyChanges = False
+            self.wereAnyChangesInTags = False
+        if self.wereAnyChangesInModel == True:
+            if self.currentLibFileName == None:
+                return #no lib was created; user exited by red cross
+            if filename == None:
+                filename = self.currentLibFileName
+            self.SaveLibrary( filename )
+            self.model.SaveLibrary()
+            #self.tags.SaveTagModel()
+            self.wereAnyChangesInModel = False
             self.mainwindow.EnableDisableExitButton( True )
 
     def SaveTags( self ):
@@ -175,13 +191,13 @@ class Controller():
 
     def AddTag( self, txt ):
         self.tags.AddTag( txt )
-        self.wereAnyChanges = True
-        self.mainwindow.EnableDisableExitButton( False )
+        self.wereAnyChangesInTags = True
+        #self.mainwindow.EnableDisableExitButton( False )
 
     def DelTag( self, selectedItemIndexes ):
         self.tags.DelTag( selectedItemIndexes )
-        self.wereAnyChanges = True
-        self.mainwindow.EnableDisableExitButton( False )
+        self.wereAnyChangesInTags = True
+        #self.mainwindow.EnableDisableExitButton( False )
 
     def HandleSetTags( self ):
         tagsSelected = []
@@ -203,7 +219,7 @@ class Controller():
              for tag in tagsSelected:
                  self.tagToItemDict[ tag ].append( item.accessibleText() )
                  #add( item.text() )
-        self.wereAnyChanges = True
+        self.wereAnyChangesInModel = True
         self.mainwindow.EnableDisableExitButton( False )
 
     def GetTagTextByIndex( self, index ):
@@ -235,13 +251,14 @@ class Controller():
     def DelFilesFromLib( self, indexes ):
         self.model.DelItems( indexes )
         self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
-        self.wereAnyChanges = True
+        self.wereAnyChangesInModel = True
         self.mainwindow.EnableDisableExitButton( False )
 
     def RefreshFilteredView( self ):
         self.mainwindow.tableView.resizeColumnsToContents()
 
     def ReadLibraryFromFile( self, fname ):
+        self.currentLibFileName = fname
         self.model.InitLibrary( fname )
         myLibFile = open( fname, 'r' )
         with myLibFile:
@@ -250,5 +267,9 @@ class Controller():
 
     def CreateNewLib( self, libName ):
         self.model.InitLibrary( libName )
-        self.wereAnyChanges = True
+        self.wereAnyChangesInModel = True
         self.mainwindow.EnableDisableExitButton( False )
+        self.currentLibFileName = libName + ".lib"
+
+    def SaveLibrary( self, fileName ):
+        pass
