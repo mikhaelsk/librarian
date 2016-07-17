@@ -172,7 +172,7 @@ class Controller():
         self.mainwindow.EnableDisableExitButton( False )
 
     def SaveModel( self, filename = None ):
-        if self.wereAnyChangesInTags ==True:
+        if self.wereAnyChangesInTags == True:
             self.tags.SaveTagModel()
             self.wereAnyChangesInTags = False
         if self.wereAnyChangesInModel == True:
@@ -216,6 +216,8 @@ class Controller():
         #fill the tag to item dictionary
         for index in selectedIndexesInTreeView:
              item = self.model.library.itemFromIndex( index )
+             for tag in tagsSelected:
+                 item.tagsList.append( tag )
              for tag in tagsSelected:
                  self.tagToItemDict[ tag ].append( item.accessibleText() )
                  #add( item.text() )
@@ -272,4 +274,17 @@ class Controller():
         self.currentLibFileName = libName + ".lib"
 
     def SaveLibrary( self, fileName ):
-        pass
+        xmlWriter = QXmlStreamWriter()
+        xmlFile = QFile( fileName )
+        if ( xmlFile.open( QIODevice.WriteOnly ) == False ):    
+            QMessageBox.warning( 0, "Error!", "Error opening file" )  
+            QFile.remove( fileName )
+            xmlOldFile.rename( fileName )  
+        else :    
+            xmlWriter.setDevice( xmlFile )	
+            xmlWriter.writeStartDocument()
+            xmlWriter.writeStartElement( self.model.root.text() ) #write the library name
+            #TODO parse treeview model to file 
+            xmlWriter.writeEndElement()
+            xmlWriter.writeEndDocument()
+            

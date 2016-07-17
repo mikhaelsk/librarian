@@ -1,8 +1,10 @@
 #from .Library import *
-from ..Controller import *
+#from ..Controller import *
+from .LibStandardItem import *
 import os.path
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtCore import *
+from PyQt5 import QtCore
 #from PyQt5.QtCore import QAbstractTableModel
 class MainModel():
     """files and folders model"""
@@ -11,7 +13,6 @@ class MainModel():
     def __init__( self, myController ):
         self.nodeId = 0
         self.controller = myController
-
         '''
         setup complete library model for treeView
         '''
@@ -22,6 +23,7 @@ class MainModel():
         #self.controller.PrintToLog( "Library initialized: " + libName )  
         #self.library.appendRow( self.root )
         self.itemNameToItemDict = {}
+        
         #self.itemNameList = []
         
         '''
@@ -32,8 +34,8 @@ class MainModel():
         self.filteredModel.setHorizontalHeaderLabels( [ "Library filtered by tag", "path to file" ] )
     
     def InitLibrary( self, libName = "MyLibrary" ):
-        self.root = QStandardItem( libName )
-        self.library.appendRow( self.root )  
+        self.root = LibStandardItem( libName )
+        self.library.appendRow( self.root )
         self.controller.PrintToLog( "Library initialized: " + libName )  
            
     def AddFolder( self, folderPath ):
@@ -71,7 +73,7 @@ class MainModel():
             if accumulated in self.itemNameToItemDict.keys():
                 previousItem = self.itemNameToItemDict[ accumulated ][ 0 ]
             else:
-                newDirItem = QStandardItem( dir )
+                newDirItem = LibStandardItem( dir )
                 newDirItem.setAccessibleText( accumulated )
                 newDirItem.setAccessibleDescription( "dir" )
                 previousItem.appendRow( newDirItem )
@@ -79,7 +81,7 @@ class MainModel():
                 previousItem = newDirItem
                 
                                 
-        currentItem = QStandardItem( fileName )
+        currentItem = LibStandardItem( fileName )
         currentItem.setAccessibleText( pathAndName )
         #currentItem.setFlags( Qt.ItemIsUserCheckable | Qt.ItemIsEnabled |
         #Qt.ItemIsSelectable )
@@ -90,7 +92,7 @@ class MainModel():
         self.numberOfDocs += 1
         self.numberOfTagedDocs += 1
         curPath = os.path.dirname( pathAndName )
-        self.filteredModel.appendRow( [ QStandardItem( fileName ), QStandardItem( curPath ) ] )
+        self.filteredModel.appendRow( [ LibStandardItem( fileName ), LibStandardItem( curPath ) ] )
     
     def ParseDirPath( self, dirPath ):
         currentDriveAndPath = os.path.splitdrive( dirPath )
@@ -115,20 +117,23 @@ class MainModel():
         if itemNameList == {}:
             self.numberOfTagedDocs = 0
             #for itemName in self.itemNameList:
-            for itemName in self.itemNameToItemDict.keys():
+            klist =  list( self.itemNameToItemDict.keys()) 
+            klist.sort() 
+            for itemName in klist:
                 if self.itemNameToItemDict[ itemName ][ 0 ].accessibleDescription() != "dir":
                     curPath = os.path.dirname( itemName )
                     curName = os.path.basename( itemName )
-                    self.filteredModel.appendRow( [ QStandardItem( curName ), QStandardItem( curPath ) ] )
+                    self.filteredModel.appendRow( [ LibStandardItem( curName ), LibStandardItem( curPath ) ] )
                     self.numberOfTagedDocs += 1
         elif itemNameList == None:
             self.controller.RefreshFilteredView()
         else:
+            itemNameList.sort()
             self.numberOfTagedDocs = len( itemNameList )
             for itemName in itemNameList:
                 curPath = os.path.dirname( itemName )
                 curName = os.path.basename( itemName )
-                self.filteredModel.appendRow( [ QStandardItem( curName ), QStandardItem( curPath ) ] )
+                self.filteredModel.appendRow( [ LibStandardItem( curName ), LibStandardItem( curPath ) ] )
         self.controller.RefreshFilteredView()
 
     def DelItems( self, indexes ):
@@ -140,5 +145,7 @@ class MainModel():
             previousItem.removeRow( itemToDelete.row() )
             self.numberOfDocs -= 1
             self.UpdateFilteredModel( {} )
+
+
             
 

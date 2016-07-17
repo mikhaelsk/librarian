@@ -22,6 +22,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="bin\Controller.py" />
+    <Compile Include="bin\models\LibStandardItem.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="bin\models\MainModel.py" />
     <Compile Include="bin\models\Tags.py">
       <SubType>Code</SubType>
