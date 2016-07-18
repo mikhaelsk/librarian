@@ -10,8 +10,7 @@ from PyQt5.QtWidgets import QMessageBox
 #from PyQt5.QtCore import QAbstractTableModel
 class MainModel():
     """files and folders model"""
-    numberOfDocs = 0
-    numberOfTagedDocs = 0
+    
     def __init__( self, myController ):
         self.nodeId = 0
         self.controller = myController
@@ -21,6 +20,8 @@ class MainModel():
         #libName = "MyLibrary"
         self.library = QStandardItemModel( 0,1 )
         self.library.setHeaderData( 0, QtCore.Qt.Horizontal, QtCore.QVariant( "TreeView of Library:" ) )
+        self.numberOfDocs = 0
+        self.numberOfTagedDocs = 0
         #self.root = QStandardItem( libName )
         #self.controller.PrintToLog( "Library initialized: " + libName )
         #self.library.appendRow( self.root )
@@ -52,9 +53,10 @@ class MainModel():
         curPath = os.path.dirname( pathAndName )
         curName = os.path.basename( pathAndName )
         pathList = self.ParseDirPath( curPath )
-        self._AddFileIntro( pathAndName, pathList, curName )
+        newElement = self._AddFileIntro( pathAndName, pathList, curName )
         self.controller.PrintToLog( "Found File: " + pathAndName )
-        self.controller.UpdateLibraryView()        
+        self.controller.UpdateLibraryView()
+        return newElement        
             
     def _AddFileIntro( self, pathAndName, pathList, fileName ):
         if pathAndName in self.itemNameToItemDict.keys():
@@ -89,6 +91,7 @@ class MainModel():
         self.numberOfTagedDocs += 1
         curPath = os.path.dirname( pathAndName )
         self.filteredModel.appendRow( [ LibStandardItem( fileName ), LibStandardItem( curPath ) ] )
+        return currentItem
     
     def ParseDirPath( self, dirPath ):
         currentDriveAndPath = os.path.splitdrive( dirPath )
@@ -155,9 +158,10 @@ class MainModel():
         self.itemNameToItemDict = {}
         self.filteredModel.setHorizontalHeaderLabels( [ "Library filtered by tag", "path to file" ] )
         self.root = None
+        self.numberOfDocs = 0
+        self.numberOfTagedDocs = 0
         self.controller.RefreshFilteredView()
-        numberOfDocs = 0
-        numberOfTagedDocs = 0
+
 
 
 
