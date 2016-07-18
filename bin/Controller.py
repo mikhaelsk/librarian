@@ -181,7 +181,7 @@ class Controller():
             if filename == None:
                 filename = self.currentLibFileName
             self.SaveLibrary( filename )
-            self.model.SaveLibrary()
+            #self.model.SaveLibrary()
             #self.tags.SaveTagModel()
             self.wereAnyChangesInModel = False
             self.mainwindow.EnableDisableExitButton( True )
@@ -255,6 +255,7 @@ class Controller():
         self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
         self.wereAnyChangesInModel = True
         self.mainwindow.EnableDisableExitButton( False )
+        self.mainwindow.numOfTagedDocsLabel.setText( str( self.model.numberOfTagedDocs ) )
 
     def RefreshFilteredView( self ):
         self.mainwindow.tableView.resizeColumnsToContents()
@@ -274,17 +275,5 @@ class Controller():
         self.currentLibFileName = libName + ".lib"
 
     def SaveLibrary( self, fileName ):
-        xmlWriter = QXmlStreamWriter()
-        xmlFile = QFile( fileName )
-        if ( xmlFile.open( QIODevice.WriteOnly ) == False ):    
-            QMessageBox.warning( 0, "Error!", "Error opening file" )  
-            QFile.remove( fileName )
-            xmlOldFile.rename( fileName )  
-        else :    
-            xmlWriter.setDevice( xmlFile )	
-            xmlWriter.writeStartDocument()
-            xmlWriter.writeStartElement( self.model.root.text() ) #write the library name
-            #TODO parse treeview model to file 
-            xmlWriter.writeEndElement()
-            xmlWriter.writeEndDocument()
+       self.model.SaveLibrary( fileName )
             

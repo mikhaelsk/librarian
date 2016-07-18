@@ -20,7 +20,7 @@ class MainModel():
         self.library = QStandardItemModel( 0,1 )
         self.library.setHeaderData( 0, QtCore.Qt.Horizontal, QtCore.QVariant( "TreeView of Library:" ) )
         #self.root = QStandardItem( libName )
-        #self.controller.PrintToLog( "Library initialized: " + libName )  
+        #self.controller.PrintToLog( "Library initialized: " + libName )
         #self.library.appendRow( self.root )
         self.itemNameToItemDict = {}
         
@@ -59,9 +59,48 @@ class MainModel():
         pass
         #TODO
 
-    def SaveLibrary( self ):
-        pass
-        #TODO
+    def SaveLibrary( self, fileName ):
+        xmlWriter = QXmlStreamWriter()
+        xmlFile = QFile( fileName )
+        if ( xmlFile.open( QIODevice.WriteOnly ) == False ):    
+            QMessageBox.warning( 0, "Error!", "Error opening file" )  
+            QFile.remove( fileName )
+            xmlOldFile.rename( fileName )  
+        else :    
+            xmlWriter.setDevice( xmlFile )	
+            xmlWriter.writeStartDocument()
+            xmlWriter.writeStartElement( "root" ) #write the library name
+            xmlWriter.writeAttribute( "name", self.root.text() )
+            self.GetAndSaveChildItems( xmlWriter, self.root )
+            '''
+            itemNameList = list( self.itemNameToItemDict.keys() )
+            itemNameList.sort()
+            for itemName in itemNameList:
+                currentItem = self.itemNameToItemDict[ itemName ]
+                if currentItem.accessibleDescription != "dir":
+                    pass
+            '''
+            #for item in self.model.root#TODO parse treeview model to file
+            xmlWriter.writeEndElement()
+            xmlWriter.autoFormattingIndent()
+            xmlWriter.writeEndDocument()
+        
+    def GetAndSaveChildItems( self, xmlWriter, item ):
+        if item.childCount != 0:
+            for item in item.GetChilds():
+                xmlWriter.writeStartElement( "element" )
+                xmlWriter.writeAttribute( "name", item.accessibleText() )
+                for tag in item.tagsList:
+                    xmlWriter.writeStartElement("tag")
+                    xmlWriter.writeAttribute( "name", tag )
+                    xmlWriter.writeEndElement()
+                
+                #xmlWriter.writeCharacters("\n")
+                self.GetAndSaveChildItems( xmlWriter, item )
+                xmlWriter.writeEndElement()
+                xmlWriter.autoFormattingIndent()
+
+
             
     def _AddFileIntro( self, pathAndName, pathList, fileName ):
         if pathAndName in self.itemNameToItemDict.keys():
@@ -71,13 +110,14 @@ class MainModel():
         for dir in pathList:
             accumulated = accumulated + "\\" + dir
             if accumulated in self.itemNameToItemDict.keys():
-                previousItem = self.itemNameToItemDict[ accumulated ][ 0 ]
+                previousItem = self.itemNameToItemDict[ accumulated ]
             else:
                 newDirItem = LibStandardItem( dir )
                 newDirItem.setAccessibleText( accumulated )
                 newDirItem.setAccessibleDescription( "dir" )
-                previousItem.appendRow( newDirItem )
-                self.itemNameToItemDict[ accumulated ] = [ newDirItem, previousItem ]
+                #previousItem.appendRow( newDirItem )
+                previousItem.setChild( newDirItem )
+                self.itemNameToItemDict[ accumulated ] = newDirItem
                 previousItem = newDirItem
                 
                                 
@@ -86,8 +126,10 @@ class MainModel():
         #currentItem.setFlags( Qt.ItemIsUserCheckable | Qt.ItemIsEnabled |
         #Qt.ItemIsSelectable )
         #currentItem.setData( QVariant( Qt.Unchecked ), Qt.CheckStateRole )
-        previousItem.appendRow( currentItem ) 
-        self.itemNameToItemDict[ pathAndName ] = [ currentItem, previousItem ]
+        
+        #previousItem.appendRow( currentItem )
+        previousItem.setChild( currentItem )
+        self.itemNameToItemDict[ pathAndName ] = currentItem
         #self.itemNameList.append( pathAndName )
         self.numberOfDocs += 1
         self.numberOfTagedDocs += 1
@@ -117,10 +159,10 @@ class MainModel():
         if itemNameList == {}:
             self.numberOfTagedDocs = 0
             #for itemName in self.itemNameList:
-            klist =  list( self.itemNameToItemDict.keys()) 
+            klist = list( self.itemNameToItemDict.keys() ) 
             klist.sort() 
             for itemName in klist:
-                if self.itemNameToItemDict[ itemName ][ 0 ].accessibleDescription() != "dir":
+                if self.itemNameToItemDict[ itemName ].accessibleDescription() != "dir":
                     curPath = os.path.dirname( itemName )
                     curName = os.path.basename( itemName )
                     self.filteredModel.appendRow( [ LibStandardItem( curName ), LibStandardItem( curPath ) ] )
@@ -139,7 +181,9 @@ class MainModel():
     def DelItems( self, indexes ):
         for index in indexes:
             itemToDelete = self.library.itemFromIndex( index )
-            previousItem = self.itemNameToItemDict[ itemToDelete.accessibleText() ][ 1 ]
+            #previousItem = self.itemNameToItemDict[
+            #itemToDelete.accessibleText() ][ 1 ]
+            previousItem = itemToDelete.parent()
             del self.itemNameToItemDict[ itemToDelete.accessibleText() ]
             #self.itemNameList.remove( itemToDelete.text() )
             previousItem.removeRow( itemToDelete.row() )
