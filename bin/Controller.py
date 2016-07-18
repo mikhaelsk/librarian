@@ -247,7 +247,7 @@ class Controller():
                 currentItemList = currentItemList & set( self.tagToItemDict[ currentTagToNumOfDocsDict[ countOfIntersections ][ 0 ] ] )
                 countOfIntersections += 1
         finally:           
-            self.model.UpdateFilteredModel( currentItemList )
+            self.model.UpdateFilteredModel( list( currentItemList ) )
             self.mainwindow.numOfTagedDocsLabel.setText( str( self.model.numberOfTagedDocs ) )
 
     def DelFilesFromLib( self, indexes ):

@@ -1,4 +1,8 @@
+
 http://projects.skylogic.ca/blog/how-to-install-pyqt5-and-build-your-first-gui-in-python-3-4/
+
+Для преобразования ui в py в консоли набрать:
+pyuic5 uimain.ui -o uimain.py
 
 - сделать виртуальную иерархическую структуризацию аля проекты
 - реализовать версионность документов
