@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>921</width>
+    <width>1047</width>
     <height>715</height>
    </rect>
   </property>
@@ -178,7 +178,7 @@
         <enum>Qt::Vertical</enum>
        </property>
        <widget class="QTreeView" name="treeView"/>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -343,7 +343,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>921</width>
+     <width>1047</width>
      <height>21</height>
     </rect>
    </property>
@@ -362,8 +362,12 @@
     <addaction name="separator"/>
     <addaction name="saveLibraryButton"/>
     <addaction name="saveLibraryToFileButton"/>
+    <addaction name="saveTagsButton"/>
+    <addaction name="separator"/>
+    <addaction name="closeLibraryButton"/>
     <addaction name="separator"/>
     <addaction name="exitButton"/>
+    <addaction name="doNotSaveExitButton"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -432,6 +436,26 @@
   <action name="saveLibraryToFileButton">
    <property name="text">
     <string>Save Library To File</string>
+   </property>
+  </action>
+  <action name="doNotSaveExitButton">
+   <property name="text">
+    <string>Don't Save and Exit</string>
+   </property>
+  </action>
+  <action name="saveTagsButton">
+   <property name="text">
+    <string>Save Tags</string>
+   </property>
+  </action>
+  <action name="closeLibraryButton">
+   <property name="text">
+    <string>Close Library</string>
+   </property>
+  </action>
+  <action name="actionDon_t_Save_and_Close_Library">
+   <property name="text">
+    <string>Don't Save and Close Library</string>
    </property>
   </action>
  </widget>

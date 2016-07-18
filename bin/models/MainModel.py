@@ -5,6 +5,8 @@ import os.path
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtCore import *
 from PyQt5 import QtCore
+from PyQt5.QtWidgets import QMessageBox
+
 #from PyQt5.QtCore import QAbstractTableModel
 class MainModel():
     """files and folders model"""
@@ -44,63 +46,15 @@ class MainModel():
                 self.controller.PrintToLog( "Found File: " + paths + "\\" + file )
                 pathList = self.ParseDirPath( paths )
                 self._AddFileIntro( paths + "\\" + file, pathList, file )
-        self.controller.UpdateLibraryView()
-        
+        self.controller.UpdateLibraryView()       
 
     def AddFile( self, pathAndName ):
         curPath = os.path.dirname( pathAndName )
         curName = os.path.basename( pathAndName )
         pathList = self.ParseDirPath( curPath )
         self._AddFileIntro( pathAndName, pathList, curName )
-        self.controller.PrintToLog( "Found File: " + name )
-        self.controller.UpdateLibraryView()
-
-    def OpenLibrary( self ):
-        pass
-        #TODO
-
-    def SaveLibrary( self, fileName ):
-        xmlWriter = QXmlStreamWriter()
-        xmlFile = QFile( fileName )
-        if ( xmlFile.open( QIODevice.WriteOnly ) == False ):    
-            QMessageBox.warning( 0, "Error!", "Error opening file" )  
-            QFile.remove( fileName )
-            xmlOldFile.rename( fileName )  
-        else :    
-            xmlWriter.setDevice( xmlFile )	
-            xmlWriter.writeStartDocument()
-            xmlWriter.writeStartElement( "root" ) #write the library name
-            xmlWriter.writeAttribute( "name", self.root.text() )
-            self.GetAndSaveChildItems( xmlWriter, self.root )
-            '''
-            itemNameList = list( self.itemNameToItemDict.keys() )
-            itemNameList.sort()
-            for itemName in itemNameList:
-                currentItem = self.itemNameToItemDict[ itemName ]
-                if currentItem.accessibleDescription != "dir":
-                    pass
-            '''
-            #for item in self.model.root#TODO parse treeview model to file
-            xmlWriter.writeEndElement()
-            xmlWriter.autoFormattingIndent()
-            xmlWriter.writeEndDocument()
-        
-    def GetAndSaveChildItems( self, xmlWriter, item ):
-        if item.childCount != 0:
-            for item in item.GetChilds():
-                xmlWriter.writeStartElement( "element" )
-                xmlWriter.writeAttribute( "name", item.accessibleText() )
-                for tag in item.tagsList:
-                    xmlWriter.writeStartElement("tag")
-                    xmlWriter.writeAttribute( "name", tag )
-                    xmlWriter.writeEndElement()
-                
-                #xmlWriter.writeCharacters("\n")
-                self.GetAndSaveChildItems( xmlWriter, item )
-                xmlWriter.writeEndElement()
-                xmlWriter.autoFormattingIndent()
-
-
+        self.controller.PrintToLog( "Found File: " + pathAndName )
+        self.controller.UpdateLibraryView()        
             
     def _AddFileIntro( self, pathAndName, pathList, fileName ):
         if pathAndName in self.itemNameToItemDict.keys():
@@ -156,6 +110,10 @@ class MainModel():
     def UpdateFilteredModel( self, itemNameList ):
         self.filteredModel.clear()
         self.filteredModel.setHorizontalHeaderLabels( [ "Library filtered by tag", "path to file" ] )
+        if itemNameList == None:
+            self.controller.RefreshFilteredView()
+            return
+        
         if itemNameList == {}:
             self.numberOfTagedDocs = 0
             #for itemName in self.itemNameList:
@@ -167,11 +125,10 @@ class MainModel():
                     curName = os.path.basename( itemName )
                     self.filteredModel.appendRow( [ LibStandardItem( curName ), LibStandardItem( curPath ) ] )
                     self.numberOfTagedDocs += 1
-        elif itemNameList == None:
-            self.controller.RefreshFilteredView()
         else:
-            itemNameList.sort()
-            self.numberOfTagedDocs = len( itemNameList )
+            itemList = list( itemNameList )
+            itemList.sort()
+            self.numberOfTagedDocs = len( itemList )
             for itemName in itemNameList:
                 curPath = os.path.dirname( itemName )
                 curName = os.path.basename( itemName )
@@ -189,6 +146,20 @@ class MainModel():
             previousItem.removeRow( itemToDelete.row() )
             self.numberOfDocs -= 1
             self.UpdateFilteredModel( {} )
+
+    def CloseLibrary(self):
+        self.library.clear()
+        self.filteredModel.clear()
+        self.library = QStandardItemModel( 0,1 )
+        self.library.setHeaderData( 0, QtCore.Qt.Horizontal, QtCore.QVariant( "TreeView of Library:" ) )
+        self.itemNameToItemDict = {}
+        self.filteredModel.setHorizontalHeaderLabels( [ "Library filtered by tag", "path to file" ] )
+        self.root = None
+        self.controller.RefreshFilteredView()
+        numberOfDocs = 0
+        numberOfTagedDocs = 0
+
+
 
 
             
