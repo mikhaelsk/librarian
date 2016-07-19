@@ -26,7 +26,7 @@ class LibrarianMainWindow( Ui_MainWindow ):
         self.controller.FinalizeInit()
       
         #self.addTagButton.clicked.connect(self.inputTagLine.update)
-        #self.deleteTagButton.pressed.connect(self.listView.update)
+        #self.deleteTagButton.pressed.connect(self.tagTableView.update)
         #self.inputTagFilter.returnPressed.connect(self.columnView.update)
 
     def setupUi( self, MainWindow ):
@@ -37,8 +37,9 @@ class LibrarianMainWindow( Ui_MainWindow ):
         self.addTagButton.clicked.connect( self.HandleAddTag )
         self.deleteTagButton.clicked.connect( self.HandleDelTag )
         self.delFileFromLibButton.clicked.connect( self.HandleDelFileFromLib )
-        self.listView.doubleClicked.connect( self.HandleClickOnTag )
-        #self.listView.setSelectionMode( QAbstractItemView.ExtendedSelection )
+        self.tagTableView.doubleClicked.connect( self.HandleClickOnTag )
+        #self.tagTableView.setSelectionMode(
+        #QAbstractItemView.ExtendedSelection )
         self.treeView.setSelectionMode( QAbstractItemView.ExtendedSelection )
         self.setTagsButton.clicked.connect( self.HandleSetTags )
         self.updateFilterButton.clicked.connect( self.HandleTagsApplied )
@@ -69,16 +70,16 @@ class LibrarianMainWindow( Ui_MainWindow ):
 
     def HandleAddTag( self ):
         self.controller.AddTag( self.inputTagLine.text() )
-        #self.listView.update()
+        #self.tagTableView.update()
 
     def HandleDelTag( self ):
-        self.controller.DelTag( self.listView.selectedIndexes() )
+        self.controller.DelTag( self.tagTableView.selectedIndexes() )
 
     def HandleSetTags( self ):
         self.controller.HandleSetTags()
 
     def HandleClickOnTag( self ):
-        index = self.listView.selectedIndexes()[ 0 ]
+        index = self.tagTableView.selectedIndexes()[ 0 ]
         tagStr = self.controller.GetTagTextByIndex( index )
         self.inputTagFilter.setText( self.inputTagFilter.text() + tagStr + ' ' )
         #self.controller.nowActiveTags.add( tagStr )
@@ -159,7 +160,9 @@ class Controller():
 
     def FinalizeInit( self ):
         self.mainwindow.treeView.setModel( self.model.library )
-        self.mainwindow.listView.setModel( self.tags.tagModel )
+        self.mainwindow.tagTableView.setSortingEnabled( True )
+        self.mainwindow.tagTableView.setModel( self.tags.tagModel )
+        self.mainwindow.tableView.setSortingEnabled( True )
         self.mainwindow.tableView.setModel( self.model.filteredModel )
         self.mainwindow.tableView.resizeColumnsToContents()
         self.mainwindow.EnableDisableExitButton( True )
@@ -235,9 +238,13 @@ class Controller():
                 tagsSelected.append( tagName )
                 if tagName in self.tagToItemDict.keys():
                     self.tagToNumOfDocsDict[ tagName ] += count
+                    currentCount = int( self.tags.tagNameToTagItemsDict[ tagName ][ 1 ].text() ) 
+                    self.tags.tagNameToTagItemsDict[ tagName ][ 1 ].setText( str( currentCount + 1 ) )
                 else:
                     self.tagToNumOfDocsDict[ tagName ] = count
                     self.tagToItemDict[ tagName ] = [] #set()
+                    self.tags.tagNameToTagItemsDict[ tagName ][ 1 ].setText( str( count ) )
+                
                 
         #fill the tag to item dictionary
         for index in selectedIndexesInTreeView:
@@ -258,6 +265,9 @@ class Controller():
             self.tagToItemDict[ tagName ] = []
         item.tagsList.append( tagName )
         self.tagToItemDict[ tagName ].append( item.accessibleText() )
+        currentCount = int( self.tags.tagNameToTagItemsDict[ tagName ][ 1 ].text() ) 
+        self.tags.tagNameToTagItemsDict[ tagName ][ 1 ].setText( str( currentCount + 1 ) ) 
+        #self.tags.UpdateNumInModel()
 
     def GetTagTextByIndex( self, index ):
         return self.tags.tagModel.itemFromIndex( index ).text()

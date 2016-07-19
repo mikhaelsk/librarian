@@ -18,8 +18,11 @@ class Tags():
         self.wereAnyChanges = False
         self.tagDict = {}
         self.tagModel = QStandardItemModel( 0,1 )
+        self.tagModel.setColumnCount( 2 )
         self.tagModel.setHeaderData( 0, Qt.Horizontal, QVariant( "TagList for Library:" ) )
+        self.tagModel.setHorizontalHeaderLabels( [ "Tags", "Quantity of tags" ] )
         #self.tagModel.itemChanged.connect( self.HandleTagChanged )
+        self.tagNameToTagItemsDict = {}
         self.InitDefaultTags()
         if os.path.exists( "myTags.xml" ) == False:
             self.controller.PrintToLog( "No Tag library found, created new one" )
@@ -32,10 +35,13 @@ class Tags():
 
     def AddTag( self, name ):
         newTag = QStandardItem( name )
+        newTagQuantity = QStandardItem( "0" )
         newTag.setFlags( Qt.ItemIsUserCheckable | Qt.ItemIsEnabled | Qt.ItemIsSelectable )
         newTag.setData( QVariant( Qt.Unchecked ), Qt.CheckStateRole )
         self.tagDict[ name ] = newTag
-        self.tagModel.appendRow( newTag )
+        currentRow = [newTag, newTagQuantity]
+        self.tagNameToTagItemsDict[name] = currentRow
+        self.tagModel.appendRow( currentRow )
         self.tagModel.sort( Qt.AscendingOrder )
         self.wereAnyChanges = True
 
@@ -70,7 +76,7 @@ class Tags():
             xmlWriter.writeStartDocument()
             xmlWriter.writeStartElement( "TagLibrary" )
             
-            klist =  list( self.tagDict.keys() )
+            klist = list( self.tagDict.keys() )
             klist.sort() 
             for tagName in klist:
                 xmlWriter.writeStartElement( tagName )
