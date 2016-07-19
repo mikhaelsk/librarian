@@ -89,7 +89,9 @@ class LibrarianMainWindow( Ui_MainWindow ):
         self.controller.FilterTheModel( listOfTagsInStr )
 
     def HandleDelFileFromLib( self ):
-        self.controller.DelFilesFromLib( self.treeView.selectedIndexes() )
+        reply = QMessageBox.question( self.centralwidget, 'Message', "Are you sure to delete item from library?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No )
+        if reply == QMessageBox.Yes:
+            self.controller.DelFilesFromLib( self.treeView.selectedIndexes() )
 
     def HandleOpenLib( self ):
         fname = QFileDialog.getOpenFileName( caption = 'Open Library Storage', filter="Libraries (*.lib)" )[ 0 ]  
@@ -115,7 +117,9 @@ class LibrarianMainWindow( Ui_MainWindow ):
         self.controller.SaveTags()
 
     def HandleDoNotSave( self ):
-        self.controller.SetDoNotSave()
+        reply = QMessageBox.question( self.centralwidget, 'Message', "Are you sure to quit without saving results?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No )
+        if reply == QMessageBox.Yes:
+            self.controller.SetDoNotSave()
 
     def HandleCloseLibrary( self ):
         self.controller.CloseLibrary()
@@ -230,8 +234,8 @@ class Controller():
 
     def HandleSetTags( self ):
         tagsSelected = []
-        selectedIndexesInTreeView = self.mainwindow.treeView.selectedIndexes()
-        count = len( selectedIndexesInTreeView )
+        selectedItems = self.GetSelectedItems()
+        count = len( selectedItems )
         for tagName in self.tags.tagDict.keys():
             tagItem = self.tags.tagDict[ tagName ]
             if tagItem.checkState() == Qt.Checked:
@@ -247,8 +251,7 @@ class Controller():
                 
                 
         #fill the tag to item dictionary
-        for index in selectedIndexesInTreeView:
-             item = self.model.library.itemFromIndex( index )
+        for item in selectedItems:
              for tag in tagsSelected:
                  item.tagsList.append( tag )
              for tag in tagsSelected:
@@ -256,6 +259,26 @@ class Controller():
                  #add( item.text() )
         self.wereAnyChangesInModel = True
         self.mainwindow.EnableDisableExitButton( False )
+
+    def GetSelectedItems( self ):
+        selectedItems = []
+        selectedIndexesInTreeView = self.mainwindow.treeView.selectedIndexes()
+        for index in selectedIndexesInTreeView:
+             item = self.model.library.itemFromIndex( index )
+             if item.accessibleDescription() == "dir":
+                 selectedItems = selectedItems + self.GetChildItemsList( item )
+             else:
+                 selectedItems.append( item )
+        return selectedItems
+
+    def GetChildItemsList( self, item ):
+        selectedItems = []
+        if item.accessibleDescription() == "dir":
+            for child in item.GetChilds():
+                selectedItems = selectedItems + self.GetChildItemsList( child )
+        else:
+            selectedItems.append( item )
+        return selectedItems
 
     def SetTagToItem( self, item, tagName ):
         if tagName in self.tagToItemDict.keys():
