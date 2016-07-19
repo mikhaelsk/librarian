@@ -287,6 +287,8 @@ class Controller():
             self.tagToNumOfDocsDict[ tagName ] = 1
             self.tagToItemDict[ tagName ] = []
         item.tagsList.append( tagName )
+        self.model.itemNameToItemDict[ item.accessibleText() ][ 1 ].setText( str( item.tagsList ) )
+        #self.m
         self.tagToItemDict[ tagName ].append( item.accessibleText() )
         currentCount = int( self.tags.tagNameToTagItemsDict[ tagName ][ 1 ].text() ) 
         self.tags.tagNameToTagItemsDict[ tagName ][ 1 ].setText( str( currentCount + 1 ) ) 
@@ -363,14 +365,7 @@ class Controller():
             xmlWriter.writeStartElement( "root" ) #write the library name
             xmlWriter.writeAttribute( "name", self.model.root.text() )
             self.GetAndSaveChildItems( xmlWriter, self.model.root )
-            '''
-            itemNameList = list( self.itemNameToItemDict.keys() )
-            itemNameList.sort()
-            for itemName in itemNameList:
-                currentItem = self.itemNameToItemDict[ itemName ]
-                if currentItem.accessibleDescription != "dir":
-                    pass
-            '''
+
             #for item in self.model.root#TODO parse treeview model to file
             xmlWriter.writeEndElement()
             xmlWriter.autoFormattingIndent()
