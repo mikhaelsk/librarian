@@ -4,7 +4,7 @@ class LibStandardItem( QStandardItem ):
     """item base class for library"""
     def __init__( self, str ):
         super().__init__( str )
-        self.tagsList = []
+        self.tagList = []
         self.childCount = 0
         #self.childLis
 
@@ -17,9 +17,20 @@ class LibStandardItem( QStandardItem ):
         cnt = self.childCount - 1
         childList = []
         while cnt >= 0:
-            childList.append( self.child( cnt ) )
+            if self.child(cnt) != None:
+                childList.append( self.child( cnt ) )
             cnt -= 1
         return childList
+'''
+    def DelChild( self, childToDelete ):
+        if childToDelete in self.GetChilds():
+            count = 0
+            for child in self.GetChilds():
+                if child.text() == childToDelete.text():
+                    self.removeRow( childToDelete.row() )
+                    break
+                count += 1
+'''
 
 
 

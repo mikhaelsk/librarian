@@ -76,7 +76,7 @@ class LibrarianMainWindow( Ui_MainWindow ):
         self.controller.DelTag( self.tagTableView.selectedIndexes() )
 
     def HandleSetTags( self ):
-        self.controller.HandleSetTags()
+        self.controller.HandleSetTags( self.treeView.selectedIndexes() )
 
     def HandleClickOnTag( self ):
         index = self.tagTableView.selectedIndexes()[ 0 ]
@@ -232,18 +232,23 @@ class Controller():
         self.wereAnyChangesInTags = True
         #self.mainwindow.EnableDisableExitButton( False )
 
-    def HandleSetTags( self ):
+    def HandleSetTags( self, indexes ):
         tagsSelected = []
-        selectedItems = self.GetSelectedItems()
+        selectedItems = self.GetSelectedItems( indexes )
         count = len( selectedItems )
         for tagName in self.tags.tagDict.keys():
             tagItem = self.tags.tagDict[ tagName ]
             if tagItem.checkState() == Qt.Checked:
                 tagsSelected.append( tagName )
                 if tagName in self.tagToItemDict.keys():
-                    self.tagToNumOfDocsDict[ tagName ] += count
+                    for item in selectedItems:
+                        countOfItemsForCurrentTag = count
+                        if item.accessibleText() in self.tagToItemDict[ tagName ]:
+                            countOfItemsForCurrentTag -= 1
+
+                    self.tagToNumOfDocsDict[ tagName ] += countOfItemsForCurrentTag
                     currentCount = int( self.tags.tagNameToTagItemsDict[ tagName ][ 1 ].text() ) 
-                    self.tags.tagNameToTagItemsDict[ tagName ][ 1 ].setText( str( currentCount + 1 ) )
+                    self.tags.tagNameToTagItemsDict[ tagName ][ 1 ].setText( str( currentCount + countOfItemsForCurrentTag ) )
                 else:
                     self.tagToNumOfDocsDict[ tagName ] = count
                     self.tagToItemDict[ tagName ] = [] #set()
@@ -252,17 +257,18 @@ class Controller():
                 
         #fill the tag to item dictionary
         for item in selectedItems:
-             for tag in tagsSelected:
-                 item.tagsList.append( tag )
-             for tag in tagsSelected:
-                 self.tagToItemDict[ tag ].append( item.accessibleText() )
+           for tag in tagsSelected:
+               if tag not in item.tagList:
+                   item.tagList.append( tag )
+        for tag in tagsSelected:
+           if item.accessibleText() not in self.tagToItemDict[ tag ]:
+               self.tagToItemDict[ tag ].append( item.accessibleText() )
                  #add( item.text() )
         self.wereAnyChangesInModel = True
         self.mainwindow.EnableDisableExitButton( False )
 
-    def GetSelectedItems( self ):
-        selectedItems = []
-        selectedIndexesInTreeView = self.mainwindow.treeView.selectedIndexes()
+    def GetSelectedItems( self, selectedIndexesInTreeView ):
+        selectedItems = []       
         for index in selectedIndexesInTreeView:
              item = self.model.library.itemFromIndex( index )
              if item.accessibleDescription() == "dir":
@@ -276,9 +282,40 @@ class Controller():
         if item.accessibleDescription() == "dir":
             for child in item.GetChilds():
                 selectedItems = selectedItems + self.GetChildItemsList( child )
+            selectedItems.append( item )
         else:
             selectedItems.append( item )
         return selectedItems
+    
+    def DelSelectedItemsWithFolders( self, selectedIndexesInTreeView ):
+        selectedItems = []       
+        for index in selectedIndexesInTreeView:
+             item = self.model.library.itemFromIndex( index )
+             if item.accessibleDescription() == "dir":
+                 self.DelChildItemsList( item )
+                 selectedItems.append( item )
+             else:
+                 selectedItems.append( item )
+                 self.DelTagsForItem( item )
+        self.model.DelItems( selectedItems )
+
+    def DelChildItemsList( self, item ):
+        selectedItems = []
+        for child in item.GetChilds():
+            if child.accessibleDescription() == "dir":
+                self.DelChildItemsList( child )
+                selectedItems.append( child )
+            else:
+                selectedItems.append( child )
+                self.DelTagsForItem( child )
+        self.model.DelItems( selectedItems )
+
+    def DelTagsForItem( self, item ):
+        for tag in item.tagList:
+            self.tagToNumOfDocsDict[ tag ] -= 1
+            self.tagToItemDict[ tag ].remove( item.accessibleText() )
+            currentCount = int( self.tags.tagNameToTagItemsDict[ tag ][ 1 ].text() ) 
+            self.tags.tagNameToTagItemsDict[ tag ][ 1 ].setText( str( currentCount - 1 ) )
 
     def SetTagToItem( self, item, tagName ):
         if tagName in self.tagToItemDict.keys():
@@ -286,8 +323,8 @@ class Controller():
         else:
             self.tagToNumOfDocsDict[ tagName ] = 1
             self.tagToItemDict[ tagName ] = []
-        item.tagsList.append( tagName )
-        self.model.itemNameToItemDict[ item.accessibleText() ][ 1 ].setText( str( item.tagsList ) )
+        item.tagList.append( tagName )
+        self.model.itemNameToItemDict[ item.accessibleText() ][ 1 ].setText( str( item.tagList ) )
         #self.m
         self.tagToItemDict[ tagName ].append( item.accessibleText() )
         currentCount = int( self.tags.tagNameToTagItemsDict[ tagName ][ 1 ].text() ) 
@@ -321,11 +358,12 @@ class Controller():
             self.mainwindow.numOfTagedDocsLabel.setText( str( self.model.numberOfTagedDocs ) )
 
     def DelFilesFromLib( self, indexes ):
-        self.model.DelItems( indexes )
+        selectedItems = self.DelSelectedItemsWithFolders( indexes )
         self.mainwindow.numOfDocsLabel.setText( str( self.model.numberOfDocs ) )
         self.wereAnyChangesInModel = True
         self.mainwindow.EnableDisableExitButton( False )
         self.mainwindow.numOfTagedDocsLabel.setText( str( self.model.numberOfTagedDocs ) )
+        self.mainwindow.treeView.setModel( self.model.library )
 
     def RefreshFilteredView( self ):
         self.mainwindow.tableView.resizeColumnsToContents()
@@ -383,7 +421,7 @@ class Controller():
                 else:
                     xmlWriter.writeStartElement( "element" )
                     xmlWriter.writeAttribute( "name", item.accessibleText() )
-                    for tag in item.tagsList:
+                    for tag in item.tagList:
                         xmlWriter.writeStartElement( "tag" )
                         xmlWriter.writeAttribute( "name", tag )
                         xmlWriter.writeEndElement()

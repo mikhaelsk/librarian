@@ -66,14 +66,14 @@ class MainModel():
         for dir in pathList:
             accumulated = accumulated + "\\" + dir
             if accumulated in self.itemNameToItemDict.keys():
-                previousItem = self.itemNameToItemDict[ accumulated ]
+                previousItem = self.itemNameToItemDict[ accumulated ][ 0 ]
             else:
                 newDirItem = LibStandardItem( dir )
                 newDirItem.setAccessibleText( accumulated )
                 newDirItem.setAccessibleDescription( "dir" )
                 #previousItem.appendRow( newDirItem )
                 previousItem.setChild( newDirItem )
-                self.itemNameToItemDict[ accumulated ] = newDirItem
+                self.itemNameToItemDict[ accumulated ] = [ newDirItem, None ]
                 previousItem = newDirItem
                 
                                 
@@ -85,7 +85,8 @@ class MainModel():
         
         #previousItem.appendRow( currentItem )
         previousItem.setChild( currentItem )
-        currentItemTags = LibStandardItem( str( currentItem.tagsList ) )
+        previousItem.sortChildren( 0 )
+        currentItemTags = LibStandardItem( str( currentItem.tagList ) )
         self.itemNameToItemDict[ pathAndName ] = [ currentItem, currentItemTags ]
         #self.itemNameList.append( pathAndName )
         self.numberOfDocs += 1
@@ -127,7 +128,7 @@ class MainModel():
                 if self.itemNameToItemDict[ itemName ][ 0 ].accessibleDescription() != "dir":
                     curPath = os.path.dirname( itemName )
                     curName = os.path.basename( itemName )
-                    self.filteredModel.appendRow( [ LibStandardItem( curName ), LibStandardItem( curPath ), LibStandardItem( str( self.itemNameToItemDict[ itemName ][ 0 ].tagsList ) ) ] )
+                    self.filteredModel.appendRow( [ LibStandardItem( curName ), LibStandardItem( curPath ), LibStandardItem( str( self.itemNameToItemDict[ itemName ][ 0 ].tagList ) ) ] )
                     self.numberOfTagedDocs += 1
         else:
             itemList = list( itemNameList )
@@ -136,20 +137,21 @@ class MainModel():
             for itemName in itemNameList:
                 curPath = os.path.dirname( itemName )
                 curName = os.path.basename( itemName )
-                self.filteredModel.appendRow( [ LibStandardItem( curName ), LibStandardItem( curPath ), LibStandardItem( str( self.itemNameToItemDict[ itemName ][ 0 ].tagsList ) ) ] )
+                self.filteredModel.appendRow( [ LibStandardItem( curName ), LibStandardItem( curPath ), LibStandardItem( str( self.itemNameToItemDict[ itemName ][ 0 ].tagList ) ) ] )
         self.controller.RefreshFilteredView()
 
-    def DelItems( self, indexes ):
-        for index in indexes:
-            itemToDelete = self.library.itemFromIndex( index )
-            #previousItem = self.itemNameToItemDict[
-            #itemToDelete.accessibleText() ][ 1 ]
+    def DelItems( self, itemsToDelete ):
+        for itemToDelete in itemsToDelete:
+            if itemToDelete.accessibleDescription() != "dir":
+                self.numberOfDocs -= 1
             previousItem = itemToDelete.parent()
             del self.itemNameToItemDict[ itemToDelete.accessibleText() ]
-            #self.itemNameList.remove( itemToDelete.text() )
+            #previousItem.DelChild( itemToDelete )
             previousItem.removeRow( itemToDelete.row() )
-            self.numberOfDocs -= 1
-            self.UpdateFilteredModel( {} )
+            #self.itemNameList.remove( itemToDelete.text() )
+            #itemToDelete.removeRow( itemToDelete.row() )
+            
+        self.UpdateFilteredModel( {} )    
 
     def CloseLibrary( self ):
         self.library.clear()
