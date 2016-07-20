@@ -11,6 +11,8 @@ in console:
 cd E:\Projects\LibrarianPyQt
 E:
 (pyi-env-name) E:\Projects\LibrarianPyQt> pyinstaller main.py
+or run pyinstaller main.spec and correct spec file to add libs, for example msvcr100.dll etc
+
 generates dist and build folders.
 the target for windows is dist. run main.exe
 
