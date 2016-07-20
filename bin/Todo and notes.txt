@@ -4,6 +4,16 @@ http://projects.skylogic.ca/blog/how-to-install-pyqt5-and-build-your-first-gui-i
 Для преобразования ui в py в консоли набрать:
 pyuic5 uimain.ui -o uimain.py
 
+to make distrib:
+run pip-Win1.7
+command: venv pyi-env-name
+in console:
+cd E:\Projects\LibrarianPyQt
+E:
+(pyi-env-name) E:\Projects\LibrarianPyQt> pyinstaller main.py
+generates dist and build folders.
+the target for windows is dist. run main.exe
+
 - сделать виртуальную иерархическую структуризацию аля проекты
 - реализовать версионность документов
 - поиск по ориентировочной дате добавления
