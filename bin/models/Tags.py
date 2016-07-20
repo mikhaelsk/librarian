@@ -35,12 +35,12 @@ class Tags():
 
     def AddTag( self, name ):
         newTag = QStandardItem( name )
-        newTagQuantity = QStandardItem( "0" )
+        newTagQuantity = QItemToSortByNum( "0" )
         newTag.setFlags( Qt.ItemIsUserCheckable | Qt.ItemIsEnabled | Qt.ItemIsSelectable )
         newTag.setData( QVariant( Qt.Unchecked ), Qt.CheckStateRole )
         self.tagDict[ name ] = newTag
-        currentRow = [newTag, newTagQuantity]
-        self.tagNameToTagItemsDict[name] = currentRow
+        currentRow = [ newTag, newTagQuantity ]
+        self.tagNameToTagItemsDict[ name ] = currentRow
         self.tagModel.appendRow( currentRow )
         self.tagModel.sort( Qt.AscendingOrder )
         self.wereAnyChanges = True
@@ -54,6 +54,7 @@ class Tags():
       
         if( xmlParser.parse( xmlInputSource ) ):
             self.controller.PrintToLog( "Tag-library successfully loaded!" )
+            self.tagModel.sort( 1, Qt.AscendingOrder )
         else:  
             self.controller.PrintToLog( "Parsing of Tag-library Failed!" )
 
@@ -107,4 +108,17 @@ class myXmlContentHandler( QXmlDefaultHandler ):
             self.myTags.AddTag( localName )
         return True
 
+class QItemToSortByNum( QStandardItem ):
+    def __init__( self, inpNum ):
+        super().__init__( inpNum )
+    #    self.num = inpNum
+
+    def __lt__( self, other ):
+        if ( isinstance( other, QStandardItem ) ):
+            my_value = int( self.text() )
+            other_value = int( other.text() )
+
+            return my_value < other_value
+
+        return super( QItemToSortByNum, self ).__lt__( other )
 
