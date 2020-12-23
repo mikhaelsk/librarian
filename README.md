@@ -7,4 +7,4 @@ Planned functionality:
 - logical hierarchical unions of documents (aka projects)
 - various database storing: xml, SQL
 
-abandoned..
+abandoned.. such a pity
