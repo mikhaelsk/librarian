@@ -6,3 +6,5 @@ Planned functionality:
 - libraries (windows style: unions of different folders)
 - logical hierarchical unions of documents (aka projects)
 - various database storing: xml, SQL
+
+abandoned..
